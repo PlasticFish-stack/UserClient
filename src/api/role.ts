@@ -24,3 +24,6 @@ export type RoleResult = {
 export const getRole = (data?: object) => {
   return http.request<RoleResult>("get", "/getroles", { data });
 };
+export const addRole = (data?: object) => {
+  return http.request<RoleResult>("post", "/addroles", { data });
+};
