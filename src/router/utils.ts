@@ -38,7 +38,25 @@ function handRank(routeInfo: any) {
       : false
     : false;
 }
-
+function handleMetas(routeList: any) {
+  let list = routeList;
+  for (let i = 0; i < list.length; i++) {
+    let element = list[i];
+    // 根據後端返回處理meta
+    if (element.meta) {
+      element.meta = JSON.parse(element.meta);
+    }
+    // 處理children層級，如果等於0，就幹掉children
+    if (element.children.length === 0) {
+      delete element.children;
+    }
+    // 如果大於0繼續走handleMetas
+    if (element.children && element.children.length > 0) {
+      handleMetas(element.children);
+    }
+  }
+  return list;
+}
 /** 按照路由中meta下的rank等级升序来排序路由 */
 function ascending(arr: any[]) {
   arr.forEach((v, index) => {
@@ -324,6 +342,7 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
       addAsyncRoutes(v.children);
     }
   });
+  console.log(arrRoutes);
   return arrRoutes;
 }
 
@@ -397,6 +416,7 @@ export {
   getTopMenu,
   addPathMatch,
   isOneOfArray,
+  handleMetas,
   getHistoryMode,
   addAsyncRoutes,
   getParentPaths,
