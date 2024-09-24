@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-type Role = {
+export type Role = {
   /** id */
   roleid: number;
   /** 角色名 */
@@ -26,4 +26,16 @@ export const getRole = (data?: object) => {
 };
 export const addRole = (data?: object) => {
   return http.request<RoleResult>("post", "/addroles", { data });
+};
+export const updateRole = (data?: object) => {
+  return http.request<RoleResult>(
+    "post",
+    "/updateroles",
+    { data },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }
+  );
 };

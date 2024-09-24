@@ -1,25 +1,43 @@
 <script setup lang="ts">
 import { getRole, addRole, RoleResult } from "@/api/role";
-import { formatGolangDate } from "@/utils/time/date";
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
+import { message } from "@/utils/message";
+import { useColumns } from "../../config/role/table";
+import DialogForm from "@/components/Customise/Role/form.vue";
+
 defineOptions({
   name: "RoleManagement"
 });
-const data = reactive([]);
+const {
+  loading,
+  columns,
+  display,
+  displayTarget,
+  pagination,
+  rowData,
+  loadingConfig,
+  adaptiveConfig,
+  deleteId,
+  onSizeChange,
+  onCurrentChange
+} = useColumns();
+const data = ref([]);
+
 async function roleList() {
   await getRole().then(result => {
     let res = (result as RoleResult).data;
-    data.push(...res);
+    data.value = [...res];
   });
   console.log(data);
 }
 
-const handleEdit = (index: number, row: RoleResult) => {
-  console.log(index, row);
-};
-const handleDelete = (index: number, row: RoleResult) => {
-  console.log(index, row);
-};
+function messageBox(success: boolean, msg: string) {
+  message(msg, {
+    customClass: "el",
+    type: success ? "success" : "error"
+  });
+  roleList();
+}
 onMounted(() => {
   roleList();
 });
@@ -28,54 +46,35 @@ onMounted(() => {
 <template>
   <div class="w-full h-full none-margin">
     <div class="p-3 h-full w-full">
-      <el-table
-        :data="data"
-        style="border-radius: 4px; height: 100%"
-        stripe
-        row-class-name="row"
-        cell-class-name="cell"
+      <pure-table
+        ref="tableRef"
+        style="border-radius: 8px"
+        border
+        adaptive
+        :adaptiveConfig="adaptiveConfig"
         row-key="role_id"
-      >
-        <el-table-column prop="role_id" label="角色Id" />
-        <el-table-column prop="role_name" label="角色名" />
-        <el-table-column prop="role_desc" label="角色简介" />
-        <el-table-column prop="role_identifier" label="角色标识" />
-        <el-table-column prop="status" label="状态">
-          <template #default="scope">
-            <el-tag :type="scope.row.status ? 'success' : 'danger'">{{
-              scope.row.status ? "生效" : "失效"
-            }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="create_time" label="创建时间" width="200">
-          <template #default="scope">
-            {{ formatGolangDate(scope.row.create_time) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="update_time" label="更新时间" width="200">
-          <template #default="scope">
-            {{ formatGolangDate(scope.row.update_time) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作选项">
-          <template #default="scope">
-            <el-button
-              size="small"
-              type="primary"
-              @click="handleEdit(scope.$index, scope.row)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+        alignWhole="center"
+        showOverflowTooltip
+        :loading="loading"
+        :loading-config="loadingConfig"
+        :data="
+          data.slice(
+            (pagination.currentPage - 1) * pagination.pageSize,
+            pagination.currentPage * pagination.pageSize
+          )
+        "
+        :columns="columns"
+        :pagination="pagination"
+        @page-size-change="onSizeChange"
+        @page-current-change="onCurrentChange"
+      />
+      <DialogForm
+        v-if="display"
+        :display="display"
+        :rows="rowData"
+        @target="displayTarget"
+        @msg="messageBox"
+      />
     </div>
   </div>
 </template>
