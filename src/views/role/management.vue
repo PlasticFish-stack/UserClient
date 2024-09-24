@@ -44,38 +44,35 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full none-margin">
-    <div class="p-3 h-full w-full">
-      <pure-table
-        ref="tableRef"
-        style="border-radius: 8px"
-        border
-        adaptive
-        :adaptiveConfig="adaptiveConfig"
-        row-key="role_id"
-        alignWhole="center"
-        showOverflowTooltip
-        :loading="loading"
-        :loading-config="loadingConfig"
-        :data="
-          data.slice(
-            (pagination.currentPage - 1) * pagination.pageSize,
-            pagination.currentPage * pagination.pageSize
-          )
-        "
-        :columns="columns"
-        :pagination="pagination"
-        @page-size-change="onSizeChange"
-        @page-current-change="onCurrentChange"
-      />
-      <DialogForm
-        v-if="display"
-        :display="display"
-        :rows="rowData"
-        @target="displayTarget"
-        @msg="messageBox"
-      />
-    </div>
+  <div class="main">
+    <pure-table
+      ref="tableRef"
+      style="border-radius: 8px"
+      adaptive
+      :adaptiveConfig="adaptiveConfig"
+      row-key="role_id"
+      alignWhole="center"
+      showOverflowTooltip
+      :loading="loading"
+      :loading-config="loadingConfig"
+      :data="
+        data.slice(
+          (pagination.currentPage - 1) * pagination.pageSize,
+          pagination.currentPage * pagination.pageSize
+        )
+      "
+      :columns="columns"
+      :pagination="pagination"
+      @page-size-change="onSizeChange"
+      @page-current-change="onCurrentChange"
+    />
+    <DialogForm
+      v-if="display"
+      :display="display"
+      :rows="rowData"
+      @target="displayTarget"
+      @msg="messageBox"
+    />
   </div>
 </template>
 <style>

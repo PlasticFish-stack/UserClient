@@ -33,9 +33,9 @@ const columns: PlusColumn[] = [
     prop: "role_desc",
     valueType: "textarea",
     fieldProps: {
-      maxlength: 200,
-      showWordLimit: true,
-      autosize: { minRows: 2, maxRows: 4 }
+      maxlength: 200
+      // showWordLimit: true,
+      // autosize: { minRows: 2, maxRows: 4 }
     }
   },
   {
@@ -60,7 +60,6 @@ const handleConfirm = (values: any) => {
   roleList(values);
   console.log(values, "change");
 };
-
 onMounted(() => {
   visible.value = props.display;
   form.value = {
@@ -95,9 +94,14 @@ onMounted(() => {
   <PlusDialogForm
     v-model:visible="visible"
     v-model="form"
+    style="border-radius: 8px"
     :form="{ columns }"
     @confirm="handleConfirm"
   >
     <template #dialog-header> 更改角色 </template>
+    <template #dialog-footer="{ handleConfirm, handleCancel }">
+      <el-button type="primary" @click="handleConfirm">确定</el-button>
+      <el-button type="warning" @click="handleCancel">取消</el-button>
+    </template>
   </PlusDialogForm>
 </template>

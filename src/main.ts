@@ -10,7 +10,7 @@ import { injectResponsiveStorage } from "@/utils/responsive";
 import "@pureadmin/table/dist/style.css";
 import PureTable from "@pureadmin/table";
 
-import Table from "@pureadmin/table";
+// import Table from "@pureadmin/table"; 有问题就把.use(table改回来)
 // import PureDescriptions from "@pureadmin/descriptions";
 
 // 引入重置样式
@@ -59,7 +59,8 @@ getPlatformConfig(app).then(async config => {
   app.use(router);
   await router.isReady();
   injectResponsiveStorage(app, config);
-  app.use(MotionPlugin).use(useElementPlus).use(Table);
+  app.use(MotionPlugin).use(useElementPlus);
+  // .use(Table);
   // .use(PureDescriptions)
   // .use(useEcharts);
   app.mount("#app");

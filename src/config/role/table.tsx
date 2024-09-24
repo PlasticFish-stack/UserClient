@@ -7,6 +7,7 @@ import { delay } from "@pureadmin/utils";
 import { formatGolangDate } from "@/utils/time/date";
 import { reactive, ref } from "vue";
 import type { Role } from "@/api/role";
+import { ElPopconfirm } from "element-plus";
 export function useColumns() {
   const display = ref(false);
   const loading = ref(false);
@@ -41,13 +42,12 @@ export function useColumns() {
     background: false,
     size: "default"
   });
-  const handleEdit = (index: number, row: Role) => {
+  const handleEdit = (_index: number, row: Role) => {
     displayTarget();
     rowData.value = row;
   };
-  const handleDelete = (index: number, row: Role) => {
+  const handleDelete = (_index: number, row: Role) => {
     deleteId.value = row.roleid;
-    console.log(index, row);
   };
   const adaptiveConfig: AdaptiveConfig = {
     /** 表格距离页面底部的偏移量，默认值为 `96` */
@@ -135,14 +135,25 @@ export function useColumns() {
           >
             编辑
           </el-button>
-
-          <el-button
-            size="small"
-            type="danger"
-            onClick={() => handleDelete(index + 1, row)}
-          >
-            删除
-          </el-button>
+          <ElPopconfirm
+            width="220"
+            title="是否要删除该角色"
+            confirm-button-text="删除"
+            cancel-button-text="返回"
+            confirmButtonType="danger"
+            v-slots={{
+              reference: () => (
+                <el-button
+                  type="danger"
+                  size="small"
+                  onClick={() => handleDelete(index + 1, row)}
+                >
+                  {" "}
+                  删除
+                </el-button>
+              )
+            }}
+          ></ElPopconfirm>
         </>
       )
     }

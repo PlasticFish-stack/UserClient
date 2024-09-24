@@ -39,3 +39,15 @@ export const updateRole = (data?: object) => {
     }
   );
 };
+export const deleteRole = (data?: object) => {
+  return http.request<RoleResult>(
+    "post",
+    "/deleteroles",
+    { data },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }
+  );
+};
