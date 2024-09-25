@@ -1,18 +1,18 @@
 import {
-  deleteRole,
-  updateRole,
-  getRole,
-  addRole,
-  type RoleResult,
-  type Role
-} from "@/api/role";
+  addMenu,
+  deleteMenu,
+  getMenu,
+  updateMenu,
+  type Menu,
+  type MenuResult
+} from "@/api/menu";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { message } from "@/utils/message";
 export const useMenuTableStore = defineStore("menu", () => {
   const display = ref(false);
   const loading = ref(false);
-  const rowData = ref<Role>(null);
+  const rowData = ref<Menu>(null);
   const type = ref(true);
   const optionLoading = ref(false);
   const dataList = ref([]);
@@ -28,9 +28,9 @@ export const useMenuTableStore = defineStore("menu", () => {
       type.value = true;
     }
   }
-  async function roleList() {
-    await getRole().then(result => {
-      let res = (result as RoleResult).data;
+  async function menuList() {
+    await getMenu().then(result => {
+      let res = (result as MenuResult).data;
       data.value = [...res];
     });
     console.log(data);
@@ -52,38 +52,38 @@ export const useMenuTableStore = defineStore("menu", () => {
       customClass: "el",
       type: success ? "success" : "error"
     });
-    roleList();
+    menuList();
   }
-  async function DeleteRole(id: number) {
+  async function DeleteMenu(id: number) {
     optionLoading.value = true;
     try {
-      await deleteRole({
-        role_id: id
+      await deleteMenu({
+        menu_id: id
       });
-      messageBox(true, "删除角色成功");
+      messageBox(true, "删除菜单成功");
     } catch (error) {
       console.log(error);
-      messageBox(false, "删除角色失败");
+      messageBox(false, "删除菜单失败");
     } finally {
       optionLoading.value = false;
     }
   }
-  async function UpdateRole(roles) {
+  async function UpdateMenu(menus) {
     try {
-      await updateRole(roles);
-      messageBox(true, "更新角色成功");
+      await updateMenu(menus);
+      messageBox(true, "更新菜单成功");
     } catch (error) {
       console.log(error);
-      messageBox(false, "更新角色失败");
+      messageBox(false, "更新菜单失败");
     }
   }
-  async function AddRole(roles) {
+  async function AddMenu(menus) {
     try {
-      await addRole(roles);
-      messageBox(true, "新增角色成功");
+      await addMenu(menus);
+      messageBox(true, "新增菜单成功");
     } catch (error) {
       console.log(error);
-      messageBox(false, "新增角色失败");
+      messageBox(false, "新增菜单失败");
     }
   }
   return {
@@ -96,11 +96,11 @@ export const useMenuTableStore = defineStore("menu", () => {
     type,
     displayTarget,
     rowDataInsert,
-    DeleteRole,
-    UpdateRole,
+    DeleteMenu,
+    UpdateMenu,
     optionLoading,
-    AddRole,
-    roleList,
+    AddMenu,
+    menuList,
     data,
     messageBox
   };

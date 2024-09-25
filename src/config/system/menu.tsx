@@ -6,11 +6,11 @@ import type {
 import { delay } from "@pureadmin/utils";
 import { formatGolangDate } from "@/utils/time/date";
 import { reactive, ref } from "vue";
-import type { Role } from "@/api/role";
+import type { Menu } from "@/api/menu";
 import { ElPopconfirm } from "element-plus";
-import { useRoleTableStore } from "@/store/modules/customise/role";
+import { useMenuTableStore } from "@/store/modules/customise/menu";
 export function useColumns() {
-  const roleTableStore = useRoleTableStore();
+  const menuTableStore = useMenuTableStore();
   const display = ref(false);
   function displayTarget() {
     display.value = !display.value;
@@ -41,13 +41,13 @@ export function useColumns() {
     background: false,
     size: "default"
   });
-  const handleEdit = (_index: number, row: Role) => {
-    roleTableStore.displayTarget();
-    roleTableStore.rowDataInsert(row);
-    roleTableStore.typeChange("edit");
+  const handleEdit = (_index: number, row: Menu) => {
+    menuTableStore.displayTarget();
+    menuTableStore.rowDataInsert(row);
+    menuTableStore.typeChange("edit");
   };
-  const handleDelete = (_index: number, row: Role) => {
-    roleTableStore.DeleteRole(row.role_id);
+  const handleDelete = (_index: number, row: Menu) => {
+    menuTableStore.DeleteMenu(row.menu_id);
   };
   const adaptiveConfig: AdaptiveConfig = {
     /** 表格距离页面底部的偏移量，默认值为 `96` */
@@ -62,20 +62,36 @@ export function useColumns() {
   const dataList = ref([]);
   const columns: TableColumnList = [
     {
-      label: "角色Id",
-      prop: "role_id"
+      label: "菜单Id",
+      prop: "menu_id"
     },
     {
-      label: "角色名",
-      prop: "role_name"
+      label: "菜单名",
+      prop: "menu_name"
     },
     {
-      label: "角色简介",
-      prop: "role_desc"
+      label: "菜单简介",
+      prop: "menu_desc"
     },
     {
-      label: "角色标识",
-      prop: "role_identifier"
+      label: "菜单标识",
+      prop: "menu_identifier"
+    },
+    {
+      label: "菜单路径",
+      prop: "menu_path"
+    },
+    {
+      label: "菜单图标",
+      prop: "menu_icon"
+    },
+    {
+      label: "菜单模板",
+      prop: "menu_path"
+    },
+    {
+      label: "菜单排序",
+      prop: "menu_sort"
     },
     {
       label: "状态",
@@ -162,11 +178,11 @@ export function useColumns() {
 
   function onCurrentChange(val) {
     loadingConfig.text = `正在加载第${val}页...`;
-    roleTableStore.loadingTarget(true);
+    menuTableStore.loadingTarget(true);
     delay().then(() => {
-      roleTableStore.loadingTarget(false);
+      menuTableStore.loadingTarget(false);
     });
-    roleTableStore.loadingTarget(false);
+    menuTableStore.loadingTarget(false);
   }
   return {
     columns,

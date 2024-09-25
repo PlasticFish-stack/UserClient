@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRoleTableStore } from "@/store/modules/customise/role";
-import { useColumns } from "../../config/role/table";
-import DialogForm from "@/components/Customise/Role/form.vue";
+import { useColumns } from "@/config/system/role";
+import DialogForm from "@/components/Customise/System/role.vue";
 
 defineOptions({
   name: "SystemRole"

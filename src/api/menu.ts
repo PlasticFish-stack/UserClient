@@ -1,9 +1,10 @@
 import { http } from "@/utils/http";
-export type Role = {
+export type Menu = {
   /** id */
   menu_id?: number;
   /** 角色名 */
   menu_name: string;
+  menu_desc: string;
   /** 角色简介 */
   menu_identifier?: string;
   menu_path: string;
@@ -22,17 +23,17 @@ export type Role = {
 };
 export type MenuResult = {
   success: boolean;
-  data: [Role];
+  data: [Menu];
 };
 
 /** 获取角色列表 */
 export const getMenu = (data?: object) => {
   return http.request<MenuResult>("get", "/getmenus", { data });
 };
-export const addRole = (data?: object) => {
+export const addMenu = (data?: object) => {
   return http.request<MenuResult>(
     "post",
-    "/addroles",
+    "/addmenus",
     { data },
     {
       headers: {
@@ -41,10 +42,10 @@ export const addRole = (data?: object) => {
     }
   );
 };
-export const updateRole = (data?: object) => {
+export const updateMenu = (data?: object) => {
   return http.request<MenuResult>(
     "post",
-    "/updateroles",
+    "/updatemenus",
     { data },
     {
       headers: {
@@ -53,10 +54,10 @@ export const updateRole = (data?: object) => {
     }
   );
 };
-export const deleteRole = (data?: object) => {
+export const deleteMenu = (data?: object) => {
   return http.request<MenuResult>(
     "post",
-    "/deleteroles",
+    "/deletemenus",
     { data },
     {
       headers: {
