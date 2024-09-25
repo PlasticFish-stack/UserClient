@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { RoleResult, updateRole } from "@/api/role";
 import "plus-pro-components/es/components/dialog-form/style/css";
 import {
   type PlusColumn,
   type FieldValues,
   PlusDialogForm
 } from "plus-pro-components";
-const props = defineProps({
-  display: Boolean,
-  rows: Object
-});
-const emits = defineEmits(["target", "msg"]);
+import { useRoleTableStore } from "@/store/modules/customise/role";
+const roleTableStore = useRoleTableStore();
 const visible = ref(false);
-let cutstom: any = [];
 const form = ref<FieldValues>(null);
 const columns: PlusColumn[] = [
   {
@@ -45,47 +40,29 @@ const columns: PlusColumn[] = [
     valueType: "switch"
   }
 ];
-async function roleList(roles) {
-  try {
-    await updateRole(roles);
-    emits("msg", true, "更新角色成功");
-  } catch (error) {
-    console.log(error);
-    emits("msg", false, "更新角色失败");
-  } finally {
-    visible.value = false;
-  }
-}
+
 const handleConfirm = (values: any) => {
-  roleList(values);
-  console.log(values, "change");
+  if (roleTableStore.type) {
+    roleTableStore.UpdateRole(values);
+  } else {
+    roleTableStore.AddRole(values);
+  }
+  visible.value = false;
 };
 onMounted(() => {
-  visible.value = props.display;
+  visible.value = roleTableStore.display;
   form.value = {
-    role_id: props.rows.role_id,
-    role_name: props.rows.role_name,
-    role_desc: props.rows.role_desc,
-    status: props.rows.status,
-    role_identifier: props.rows.role_identifier
+    role_id: roleTableStore.rowData.role_id,
+    role_name: roleTableStore.rowData.role_name,
+    role_desc: roleTableStore.rowData.role_desc,
+    status: roleTableStore.rowData.status,
+    role_identifier: roleTableStore.rowData.role_identifier
   };
-  console.log(form.value, "rows");
-
-  watch(
-    () => props.display,
-    newVal => {
-      if (visible.value != props.display) {
-        visible.value = newVal;
-      }
-    }
-  );
+  console.log(roleTableStore.rowData, "rows");
   watch(
     () => visible.value,
     newVal => {
-      if (visible.value == false && props.display == true) {
-        cutstom = emits("target");
-        console.log(cutstom);
-      }
+      roleTableStore.displayTarget(newVal);
     }
   );
 });
@@ -100,7 +77,31 @@ onMounted(() => {
   >
     <template #dialog-header> 更改角色 </template>
     <template #dialog-footer="{ handleConfirm, handleCancel }">
-      <el-button type="primary" @click="handleConfirm">确定</el-button>
+      <el-button
+        type="primary"
+        :loading="roleTableStore.optionLoading"
+        @click="handleConfirm"
+      >
+        <template #loading>
+          <div class="custom-loading">
+            <svg class="circular" viewBox="-10, -10, 50, 50">
+              <path
+                class="path"
+                d="
+            M 30 15
+            L 28 17
+            M 25.61 25.61
+            A 15 15, 0, 0, 1, 15 30
+            A 15 15, 0, 1, 1, 27.99 7.5
+            L 15 15
+          "
+                style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"
+              />
+            </svg>
+          </div>
+        </template>
+        确定
+      </el-button>
       <el-button type="warning" @click="handleCancel">取消</el-button>
     </template>
   </PlusDialogForm>

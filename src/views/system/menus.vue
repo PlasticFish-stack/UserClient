@@ -1,50 +1,39 @@
 <script setup lang="ts">
-import { getRole, addRole, RoleResult } from "@/api/role";
-import { onMounted, reactive, ref, watch } from "vue";
-import { message } from "@/utils/message";
+import { onMounted } from "vue";
+import { useMenuTableStore } from "@/store/modules/customise/menu";
 import { useColumns } from "../../config/role/table";
 import DialogForm from "@/components/Customise/Role/form.vue";
 
 defineOptions({
-  name: "RoleManagement"
+  name: "SystemMenu"
 });
 const {
-  loading,
   columns,
-  display,
-  displayTarget,
   pagination,
-  rowData,
   loadingConfig,
   adaptiveConfig,
-  deleteId,
   onSizeChange,
   onCurrentChange
 } = useColumns();
-const data = ref([]);
-
-async function roleList() {
-  await getRole().then(result => {
-    let res = (result as RoleResult).data;
-    data.value = [...res];
-  });
-  console.log(data);
-}
-
-function messageBox(success: boolean, msg: string) {
-  message(msg, {
-    customClass: "el",
-    type: success ? "success" : "error"
-  });
-  roleList();
+const menuTableStore = useMenuTableStore();
+function addRoleForm() {
+  const row = {
+    role_name: "",
+    role_desc: "",
+    status: true,
+    role_identifier: ""
+  };
+  menuTableStore.displayTarget();
+  menuTableStore.rowDataInsert(row);
+  menuTableStore.typeChange("add");
 }
 onMounted(() => {
-  roleList();
+  menuTableStore.roleList();
 });
 </script>
-
 <template>
   <div class="main">
+    <el-button class="mb-2" @click="addRoleForm">新建菜单</el-button>
     <pure-table
       ref="tableRef"
       style="border-radius: 8px"
@@ -53,10 +42,10 @@ onMounted(() => {
       row-key="role_id"
       alignWhole="center"
       showOverflowTooltip
-      :loading="loading"
+      :loading="menuTableStore.loading"
       :loading-config="loadingConfig"
       :data="
-        data.slice(
+        menuTableStore.data.slice(
           (pagination.currentPage - 1) * pagination.pageSize,
           pagination.currentPage * pagination.pageSize
         )
@@ -66,15 +55,10 @@ onMounted(() => {
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"
     />
-    <DialogForm
-      v-if="display"
-      :display="display"
-      :rows="rowData"
-      @target="displayTarget"
-      @msg="messageBox"
-    />
+    <DialogForm v-if="menuTableStore.display" />
   </div>
 </template>
+
 <style>
 .cell {
   text-align: center;

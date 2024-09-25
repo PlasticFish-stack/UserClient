@@ -1,11 +1,12 @@
 import { http } from "@/utils/http";
 export type Role = {
   /** id */
-  role_id?: number;
+  menu_id?: number;
   /** 角色名 */
-  role_name: string;
+  menu_name: string;
   /** 角色简介 */
-  role_desc?: string;
+  menu_identifier?: string;
+  menu_path: string;
   /** 角色状态 */
   status: boolean;
   /** 创建时间 */
@@ -13,19 +14,23 @@ export type Role = {
   /** 修改时间 */
   update_time: Date;
   /** 角色标识 */
-  role_identifier: string;
+  menu_icon: string;
+  menu_component: string;
+  menu_type: boolean;
+  menu_sort: number;
+  parent_id: number;
 };
-export type RoleResult = {
+export type MenuResult = {
   success: boolean;
   data: [Role];
 };
 
 /** 获取角色列表 */
-export const getRole = (data?: object) => {
-  return http.request<RoleResult>("get", "/getroles", { data });
+export const getMenu = (data?: object) => {
+  return http.request<MenuResult>("get", "/getmenus", { data });
 };
 export const addRole = (data?: object) => {
-  return http.request<RoleResult>(
+  return http.request<MenuResult>(
     "post",
     "/addroles",
     { data },
@@ -37,7 +42,7 @@ export const addRole = (data?: object) => {
   );
 };
 export const updateRole = (data?: object) => {
-  return http.request<RoleResult>(
+  return http.request<MenuResult>(
     "post",
     "/updateroles",
     { data },
@@ -49,7 +54,7 @@ export const updateRole = (data?: object) => {
   );
 };
 export const deleteRole = (data?: object) => {
-  return http.request<RoleResult>(
+  return http.request<MenuResult>(
     "post",
     "/deleteroles",
     { data },
