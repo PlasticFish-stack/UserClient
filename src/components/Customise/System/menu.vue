@@ -4,9 +4,11 @@ import "plus-pro-components/es/components/dialog-form/style/css";
 import {
   type PlusColumn,
   type FieldValues,
-  PlusDialogForm
+  PlusDialogForm,
+  Mutable
 } from "plus-pro-components";
 import { useMenuTableStore } from "@/store/modules/customise/menu";
+import { ColProps, RowProps } from "element-plus";
 const menuTableStore = useMenuTableStore();
 const visible = ref(false);
 const form = ref<FieldValues>(null);
@@ -81,6 +83,12 @@ const handleConfirm = (values: any) => {
   }
   visible.value = false;
 };
+const rowProps: Partial<Mutable<RowProps>> = {
+  gutter: 20
+};
+const colProps: Partial<Mutable<ColProps>> = {
+  span: 12 
+};
 onMounted(() => {
   visible.value = menuTableStore.display;
   form.value = {
@@ -110,7 +118,7 @@ onMounted(() => {
     v-model:visible="visible"
     v-model="form"
     style="border-radius: 8px"
-    :form="{ columns }"
+    :form="{ columns, rowProps, colProps }"
     @confirm="handleConfirm"
   >
     <template #dialog-header> 更改菜单 </template>
