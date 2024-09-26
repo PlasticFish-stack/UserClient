@@ -42,7 +42,9 @@ onMounted(() => {
     <pure-table
       ref="tableRef"
       style="border-radius: 8px"
+      default-expand-all
       adaptive
+      border
       :adaptiveConfig="adaptiveConfig"
       row-key="menu_id"
       alignWhole="center"
@@ -55,6 +57,7 @@ onMounted(() => {
           pagination.currentPage * pagination.pageSize
         )
       "
+      headerAlign="left"
       :columns="columns"
       :pagination="pagination"
       @page-size-change="onSizeChange"
@@ -64,19 +67,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style>
-.cell {
-  text-align: center;
-}
-.row {
-  height: 55px;
-}
-.container {
-  width: 100%;
-  height: 100%;
-  background: #000;
-}
-.none-margin {
-  margin: 0 !important;
-}
-</style>
+<style scoped></style>

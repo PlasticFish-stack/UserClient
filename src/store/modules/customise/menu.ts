@@ -31,6 +31,7 @@ export const useMenuTableStore = defineStore("menu", () => {
   async function menuList() {
     await getMenu().then(result => {
       let res = (result as MenuResult).data;
+      console.log(res, "res");
       data.value = [...res];
     });
     console.log(data);

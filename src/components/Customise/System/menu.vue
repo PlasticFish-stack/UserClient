@@ -56,7 +56,7 @@ const columns: PlusColumn[] = [
     valueType: "copy"
   },
   {
-    label: "是否为子菜单",
+    label: "子菜单?",
     width: 200,
     prop: "menu_type",
     valueType: "switch"
@@ -87,7 +87,7 @@ const rowProps: Partial<Mutable<RowProps>> = {
   gutter: 20
 };
 const colProps: Partial<Mutable<ColProps>> = {
-  span: 12 
+  span: 12
 };
 onMounted(() => {
   visible.value = menuTableStore.display;
@@ -118,7 +118,7 @@ onMounted(() => {
     v-model:visible="visible"
     v-model="form"
     style="border-radius: 8px"
-    :form="{ columns, rowProps, colProps }"
+    :form="{ columns }"
     @confirm="handleConfirm"
   >
     <template #dialog-header> 更改菜单 </template>

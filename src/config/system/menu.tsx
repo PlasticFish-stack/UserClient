@@ -38,7 +38,7 @@ export function useColumns() {
     pageSizes: [20, 40, 60],
     total: 1,
     align: "center",
-    background: false,
+    background: true,
     size: "default"
   });
   const handleEdit = (_index: number, row: Menu) => {
@@ -63,39 +63,62 @@ export function useColumns() {
   const columns: TableColumnList = [
     {
       label: "菜单Id",
-      prop: "menu_id"
+      prop: "menu_id",
+      align: "left",
+      width: 100
     },
     {
       label: "菜单名",
-      prop: "menu_name"
+      prop: "menu_name",
+      align: "left",
+      width: 150
     },
     {
       label: "菜单简介",
-      prop: "menu_desc"
+      prop: "menu_desc",
+      align: "left"
     },
     {
       label: "菜单标识",
-      prop: "menu_identifier"
+      prop: "menu_identifier",
+      headerAlign: "center",
+      align: "center",
+      width: 150
     },
     {
       label: "菜单路径",
-      prop: "menu_path"
+      prop: "menu_path",
+      headerAlign: "center",
+      align: "center",
+      width: 120
     },
     {
       label: "菜单图标",
-      prop: "menu_icon"
+      prop: "menu_icon",
+      headerAlign: "center",
+      align: "center",
+      width: 100
     },
     {
       label: "菜单模板",
-      prop: "menu_path"
+      prop: "menu_path",
+      headerAlign: "center",
+      align: "center",
+      width: 120
     },
     {
       label: "菜单排序",
-      prop: "menu_sort"
+      prop: "menu_sort",
+      headerAlign: "center",
+      align: "center",
+      width: 100
     },
     {
       label: "状态",
+      headerAlign: "center",
       prop: "status",
+      align: "center",
+      width: 100,
       cellRenderer: ({ row }) => (
         <el-tag type={row.status ? "success" : "danger"}>
           {row.status ? "生效" : "失效"}
@@ -104,6 +127,7 @@ export function useColumns() {
     },
     {
       prop: "create_time",
+      width: 180,
       headerRenderer: () => (
         <div style="display: flex; justify-content: center; align-items: center;position: relative;">
           <div style="position: absolute; left:0">
@@ -121,8 +145,8 @@ export function useColumns() {
       )
     },
     {
-      label: "更新时间",
       prop: "update_time",
+      width: 180,
       headerRenderer: () => (
         <div style="display: flex; justify-content: center; align-items: center;position: relative;">
           <div style="position: absolute; left:0">
@@ -142,8 +166,18 @@ export function useColumns() {
     {
       label: "操作选项",
       prop: "",
+      align: "center",
+      headerAlign: "center",
+      width: 260,
       cellRenderer: ({ index, row }) => (
         <>
+          <el-button
+            type="success"
+            size="small"
+            onClick={() => handleEdit(index + 1, row)}
+          >
+            新增子菜单
+          </el-button>
           <el-button
             type="primary"
             size="small"
