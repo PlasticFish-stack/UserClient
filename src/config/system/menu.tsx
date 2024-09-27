@@ -42,9 +42,41 @@ export function useColumns() {
     size: "default"
   });
   const handleEdit = (_index: number, row: Menu) => {
+    const rows = {
+      menu_id: row.menu_id,
+      menu_name: row.menu_name,
+      menu_desc: row.menu_desc,
+      menu_identifier: row.menu_identifier,
+      menu_path: row.menu_path,
+      status: row.status,
+      menu_icon: row.menu_icon,
+      menu_component: row.menu_component,
+      menu_type: row.menu_type,
+      menu_sort: row.menu_sort,
+      parent_id: row.parent_id
+    };
+    console.log(rows, "rows");
     menuTableStore.displayTarget();
-    menuTableStore.rowDataInsert(row);
+    menuTableStore.rowDataInsert(rows);
     menuTableStore.typeChange("edit");
+  };
+  const handleAdd = (_index: number, row: Menu) => {
+    const rows = {
+      menu_name: "",
+      menu_identifier: "",
+      menu_desc: "",
+      menu_path: "",
+      status: true,
+      menu_icon: "",
+      menu_component: "",
+      menu_type: true,
+      menu_sort: 0,
+      parent_id: row.menu_id
+    };
+    menuTableStore.displayTarget();
+    menuTableStore.isParent(false);
+    menuTableStore.rowDataInsert(rows);
+    menuTableStore.typeChange("add");
   };
   const handleDelete = (_index: number, row: Menu) => {
     menuTableStore.DeleteMenu(row.menu_id);
@@ -90,7 +122,10 @@ export function useColumns() {
       prop: "menu_path",
       headerAlign: "center",
       align: "center",
-      width: 120
+      width: 120,
+      cellRenderer: ({ row }) => (
+        <>{row.menu_path == "/null" ? "" : row.menu_path}</>
+      )
     },
     {
       label: "菜单图标",
@@ -101,7 +136,7 @@ export function useColumns() {
     },
     {
       label: "菜单模板",
-      prop: "menu_path",
+      prop: "menu_component",
       headerAlign: "center",
       align: "center",
       width: 120
@@ -111,7 +146,10 @@ export function useColumns() {
       prop: "menu_sort",
       headerAlign: "center",
       align: "center",
-      width: 100
+      width: 100,
+      cellRenderer: ({ row }) => (
+        <>{row.menu_sort == "0" ? "" : row.menu_sort}</>
+      )
     },
     {
       label: "状态",
@@ -174,7 +212,7 @@ export function useColumns() {
           <el-button
             type="success"
             size="small"
-            onClick={() => handleEdit(index + 1, row)}
+            onClick={() => handleAdd(index + 1, row)}
           >
             新增子菜单
           </el-button>

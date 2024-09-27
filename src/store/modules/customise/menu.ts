@@ -1,5 +1,6 @@
 import {
-  addMenu,
+  addChildMenu,
+  addParentMenu,
   deleteMenu,
   getMenu,
   updateMenu,
@@ -11,12 +12,16 @@ import { ref } from "vue";
 import { message } from "@/utils/message";
 export const useMenuTableStore = defineStore("menu", () => {
   const display = ref(false);
+  const addParent = ref(true);
   const loading = ref(false);
   const rowData = ref<Menu>(null);
   const type = ref(true);
   const optionLoading = ref(false);
   const dataList = ref([]);
   const data = ref([]);
+  function isParent(bool: boolean) {
+    addParent.value = bool;
+  }
   function rowDataInsert(row) {
     rowData.value = null;
     rowData.value = row;
@@ -78,9 +83,14 @@ export const useMenuTableStore = defineStore("menu", () => {
       messageBox(false, "更新菜单失败");
     }
   }
-  async function AddMenu(menus) {
+  async function AddMenu(menus, bool) {
     try {
-      await addMenu(menus);
+      if (bool) {
+        await addParentMenu(menus);
+      } else {
+        await addChildMenu(menus);
+      }
+
       messageBox(true, "新增菜单成功");
     } catch (error) {
       console.log(error);
@@ -100,7 +110,9 @@ export const useMenuTableStore = defineStore("menu", () => {
     DeleteMenu,
     UpdateMenu,
     optionLoading,
+    isParent,
     AddMenu,
+    addParent,
     menuList,
     data,
     messageBox

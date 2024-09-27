@@ -30,10 +30,22 @@ export type MenuResult = {
 export const getMenu = (data?: object) => {
   return http.request<MenuResult>("get", "/getmenus", { data });
 };
-export const addMenu = (data?: object) => {
+export const addParentMenu = (data?: object) => {
   return http.request<MenuResult>(
     "post",
-    "/addmenus",
+    "/addparentmenus",
+    { data },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }
+  );
+};
+export const addChildMenu = (data?: object) => {
+  return http.request<MenuResult>(
+    "post",
+    "/addchildmenus",
     { data },
     {
       headers: {

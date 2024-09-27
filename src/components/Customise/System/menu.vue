@@ -35,7 +35,8 @@ const columns: PlusColumn[] = [
     label: "菜单路径",
     width: 120,
     prop: "menu_path",
-    valueType: "copy"
+    valueType: "copy",
+    hideInForm: menuTableStore.rowData.parent_id == 0 ? true : false
   },
   {
     label: "菜单图标",
@@ -53,19 +54,21 @@ const columns: PlusColumn[] = [
     label: "菜单排序",
     width: 120,
     prop: "menu_sort",
-    valueType: "copy"
+    valueType: "copy",
+    hideInForm: menuTableStore.rowData.parent_id == 0 ? false : true
   },
-  {
-    label: "子菜单?",
-    width: 200,
-    prop: "menu_type",
-    valueType: "switch"
-  },
+  // {
+  //   label: "菜单或按钮",
+  //   width: 200,
+  //   prop: "menu_type",
+  //   valueType: "switch"
+  // },
   {
     label: "父菜单id",
     width: 120,
     prop: "parent_id",
-    valueType: "copy"
+    valueType: "copy",
+    hideInForm: menuTableStore.rowData.parent_id == 0 ? true : false
   },
   {
     label: "是否生效",
@@ -79,7 +82,11 @@ const handleConfirm = (values: any) => {
   if (menuTableStore.type) {
     menuTableStore.UpdateMenu(values);
   } else {
-    menuTableStore.AddMenu(values);
+    if (values.parent_id == 0) {
+      menuTableStore.AddMenu(values, true);
+    } else {
+      menuTableStore.AddMenu(values, false);
+    }
   }
   visible.value = false;
 };

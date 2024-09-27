@@ -20,15 +20,16 @@ function addMenuForm() {
   const row = {
     menu_name: "",
     menu_identifier: "",
-    menu_path: "",
-    status: "",
+    menu_path: "/null",
+    status: true,
     menu_icon: "",
     menu_component: "",
-    menu_type: true,
+    menu_type: false,
     menu_sort: 1,
     parent_id: 0
   };
   menuTableStore.displayTarget();
+  menuTableStore.isParent(true);
   menuTableStore.rowDataInsert(row);
   menuTableStore.typeChange("add");
 }
