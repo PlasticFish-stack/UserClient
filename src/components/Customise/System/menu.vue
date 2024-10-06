@@ -36,7 +36,7 @@ const columns: PlusColumn[] = [
     width: 120,
     prop: "path",
     valueType: "copy",
-    hideInForm: menuTableStore.rowData.parent_id == 0 ? true : false
+    hideInForm: menuTableStore.setting.isParent
   },
   {
     label: "菜单图标",
@@ -55,14 +55,14 @@ const columns: PlusColumn[] = [
     width: 120,
     prop: "sort",
     valueType: "copy",
-    hideInForm: menuTableStore.rowData.parent_id == 0 ? false : true
+    hideInForm: !menuTableStore.setting.isParent
   },
   {
     label: "父菜单id",
     width: 120,
     prop: "parent_id",
     valueType: "copy",
-    hideInForm: menuTableStore.rowData.parent_id == 0 ? true : false
+    hideInForm: menuTableStore.setting.isParent
   },
   {
     label: "是否生效",
@@ -74,9 +74,9 @@ const columns: PlusColumn[] = [
 
 const handleConfirm = (values: any) => {
   if (menuTableStore.setting.type == "add") {
-    menuTableStore.UpdateMenu(values);
-  } else if (menuTableStore.setting.type == "edit") {
     menuTableStore.AddMenu(values);
+  } else if (menuTableStore.setting.type == "edit") {
+    menuTableStore.UpdateMenu(values);
   } else {
     return;
   }
@@ -119,7 +119,15 @@ onMounted(() => {
     :form="{ columns }"
     @confirm="handleConfirm"
   >
-    <template #dialog-header> 更改菜单 </template>
+    <template #dialog-header>
+      {{
+        menuTableStore.setting.type == "add"
+          ? menuTableStore.setting.isParent
+            ? "新增父菜单"
+            : "新增子菜单"
+          : "更改菜单"
+      }}
+    </template>
     <template #dialog-footer="{ handleConfirm, handleCancel }">
       <el-button
         type="primary"

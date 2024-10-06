@@ -62,11 +62,12 @@ export const useMenuTableStore = defineStore("menu", () => {
     });
     menuList();
   }
-  async function DeleteMenu(id: number) {
+  async function DeleteMenu(id: number, name: string) {
     optionLoading.value = true;
     try {
       await deleteMenu({
-        id: id
+        id: id,
+        name: name
       });
       messageBox(true, "删除菜单成功");
     } catch (error) {

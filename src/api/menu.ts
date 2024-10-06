@@ -44,7 +44,7 @@ export const addMenu = (data?: object) => {
 export const updateMenu = (data?: object) => {
   return http.request<MenuResult>(
     "post",
-    "/updatemenus",
+    "/menu/update",
     { data },
     {
       headers: {
@@ -56,7 +56,7 @@ export const updateMenu = (data?: object) => {
 export const deleteMenu = (data?: object) => {
   return http.request<MenuResult>(
     "post",
-    "/deletemenus",
+    "/menu/delete",
     { data },
     {
       headers: {

@@ -58,6 +58,11 @@ export function useColumns() {
     menuTableStore.displayTarget();
     menuTableStore.rowDataInsert(rows);
     menuTableStore.typeChange("edit");
+    if (row.parent_id == 0) {
+      menuTableStore.isParent(true);
+    } else {
+      menuTableStore.isParent(false);
+    }
   };
   const handleAdd = (_index: number, row: Menu) => {
     const rows = {
@@ -77,7 +82,7 @@ export function useColumns() {
     menuTableStore.typeChange("add");
   };
   const handleDelete = (_index: number, row: Menu) => {
-    menuTableStore.DeleteMenu(row.id);
+    menuTableStore.DeleteMenu(row.id, row.name);
   };
   const adaptiveConfig: AdaptiveConfig = {
     /** 表格距离页面底部的偏移量，默认值为 `96` */
@@ -91,36 +96,34 @@ export function useColumns() {
   };
   const dataList = ref([]);
   const columns: TableColumnList = [
-    {
-      label: "菜单Id",
-      prop: "id",
-      align: "left",
-      width: 100
-    },
+    // {
+    //   label: "菜单Id",
+    //   prop: "id",
+    //   align: "left",
+    //   width: 100
+    // },
     {
       label: "菜单名",
       prop: "name",
-      align: "left",
-      width: 150
+      align: "left"
     },
     {
       label: "菜单简介",
       prop: "description",
-      align: "left"
+      align: "center",
+      headerAlign: "center"
     },
     {
       label: "菜单标识",
       prop: "identifier",
       headerAlign: "center",
-      align: "center",
-      width: 150
+      align: "center"
     },
     {
       label: "菜单路径",
       prop: "path",
       headerAlign: "center",
       align: "center",
-      width: 120,
       cellRenderer: ({ row }) => (
         <>{row.menu_path == "/null" ? "" : row.menu_path}</>
       )
@@ -129,15 +132,13 @@ export function useColumns() {
       label: "菜单图标",
       prop: "icon",
       headerAlign: "center",
-      align: "center",
-      width: 100
+      align: "center"
     },
     {
       label: "菜单模板",
       prop: "component",
       headerAlign: "center",
-      align: "center",
-      width: 120
+      align: "center"
     },
     {
       label: "菜单排序",

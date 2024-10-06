@@ -14,18 +14,18 @@ const columns: PlusColumn[] = [
   {
     label: "角色名称",
     width: 120,
-    prop: "role_name",
+    prop: "name",
     valueType: "copy"
   },
   {
     label: "角色标识",
     width: 120,
-    prop: "role_identifier",
+    prop: "identifier",
     valueType: "copy"
   },
   {
     label: "角色简介",
-    prop: "role_desc",
+    prop: "description",
     valueType: "textarea",
     fieldProps: {
       maxlength: 200
@@ -52,11 +52,11 @@ const handleConfirm = (values: any) => {
 onMounted(() => {
   visible.value = roleTableStore.display;
   form.value = {
-    role_id: roleTableStore.rowData.role_id,
-    role_name: roleTableStore.rowData.role_name,
-    role_desc: roleTableStore.rowData.role_desc,
+    id: roleTableStore.rowData.id,
+    name: roleTableStore.rowData.name,
+    description: roleTableStore.rowData.description,
     status: roleTableStore.rowData.status,
-    role_identifier: roleTableStore.rowData.role_identifier
+    identifier: roleTableStore.rowData.identifier
   };
   console.log(roleTableStore.rowData, "rows");
   watch(

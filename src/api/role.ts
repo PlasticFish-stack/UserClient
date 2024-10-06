@@ -1,11 +1,11 @@
 import { http } from "@/utils/http";
 export type Role = {
   /** id */
-  role_id?: number;
+  id?: number;
   /** 角色名 */
-  role_name: string;
+  name: string;
   /** 角色简介 */
-  role_desc?: string;
+  description?: string;
   /** 角色状态 */
   status: boolean;
   /** 创建时间 */
@@ -13,7 +13,7 @@ export type Role = {
   /** 修改时间 */
   update_time: Date;
   /** 角色标识 */
-  role_identifier: string;
+  identifier: string;
 };
 export type RoleResult = {
   success: boolean;
@@ -22,12 +22,12 @@ export type RoleResult = {
 
 /** 获取角色列表 */
 export const getRole = (data?: object) => {
-  return http.request<RoleResult>("get", "/getroles", { data });
+  return http.request<RoleResult>("get", "/role/getall", { data });
 };
 export const addRole = (data?: object) => {
   return http.request<RoleResult>(
     "post",
-    "/addroles",
+    "/role/add",
     { data },
     {
       headers: {
@@ -39,7 +39,7 @@ export const addRole = (data?: object) => {
 export const updateRole = (data?: object) => {
   return http.request<RoleResult>(
     "post",
-    "/updateroles",
+    "/role/update",
     { data },
     {
       headers: {
@@ -51,7 +51,7 @@ export const updateRole = (data?: object) => {
 export const deleteRole = (data?: object) => {
   return http.request<RoleResult>(
     "post",
-    "/deleteroles",
+    "/role/delete",
     { data },
     {
       headers: {

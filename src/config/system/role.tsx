@@ -47,7 +47,7 @@ export function useColumns() {
     roleTableStore.typeChange("edit");
   };
   const handleDelete = (_index: number, row: Role) => {
-    roleTableStore.DeleteRole(row.role_id);
+    roleTableStore.DeleteRole(row.id);
   };
   const adaptiveConfig: AdaptiveConfig = {
     /** 表格距离页面底部的偏移量，默认值为 `96` */
@@ -61,21 +61,21 @@ export function useColumns() {
   };
   const dataList = ref([]);
   const columns: TableColumnList = [
-    {
-      label: "角色Id",
-      prop: "role_id"
-    },
+    // {
+    //   label: "角色Id",
+    //   prop: "id"
+    // },
     {
       label: "角色名",
-      prop: "role_name"
+      prop: "name"
     },
     {
       label: "角色简介",
-      prop: "role_desc"
+      prop: "description"
     },
     {
       label: "角色标识",
-      prop: "role_identifier"
+      prop: "identifier"
     },
     {
       label: "状态",
