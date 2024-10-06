@@ -1,6 +1,5 @@
 import {
-  addChildMenu,
-  addParentMenu,
+  addMenu,
   deleteMenu,
   getMenu,
   updateMenu,
@@ -11,16 +10,19 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { message } from "@/utils/message";
 export const useMenuTableStore = defineStore("menu", () => {
-  const display = ref(false);
-  const addParent = ref(true);
+  const setting = ref({
+    options: "edit",
+    type: "add",
+    display: false,
+    isParent: false
+  });
   const loading = ref(false);
   const rowData = ref<Menu>(null);
-  const type = ref(true);
   const optionLoading = ref(false);
   const dataList = ref([]);
   const data = ref([]);
   function isParent(bool: boolean) {
-    addParent.value = bool;
+    setting.value.isParent = bool;
   }
   function rowDataInsert(row) {
     rowData.value = null;
@@ -28,9 +30,11 @@ export const useMenuTableStore = defineStore("menu", () => {
   }
   function typeChange(t: string) {
     if (t == "add") {
-      type.value = false;
+      setting.value.type = "add";
+    } else if (t == "edit") {
+      setting.value.type = "edit";
     } else {
-      type.value = true;
+      return;
     }
   }
   async function menuList() {
@@ -43,12 +47,10 @@ export const useMenuTableStore = defineStore("menu", () => {
   }
   function displayTarget(displayBool?: boolean) {
     if (displayBool) {
-      display.value = displayBool;
+      setting.value.display = displayBool;
     } else {
-      display.value = !display.value;
+      setting.value.display = !setting.value.display;
     }
-
-    console.log(display.value);
   }
   function loadingTarget(bool: boolean) {
     loading.value = bool;
@@ -64,7 +66,7 @@ export const useMenuTableStore = defineStore("menu", () => {
     optionLoading.value = true;
     try {
       await deleteMenu({
-        menu_id: id
+        id: id
       });
       messageBox(true, "删除菜单成功");
     } catch (error) {
@@ -83,14 +85,9 @@ export const useMenuTableStore = defineStore("menu", () => {
       messageBox(false, "更新菜单失败");
     }
   }
-  async function AddMenu(menus, bool) {
+  async function AddMenu(menus) {
     try {
-      if (bool) {
-        await addParentMenu(menus);
-      } else {
-        await addChildMenu(menus);
-      }
-
+      await addMenu(menus);
       messageBox(true, "新增菜单成功");
     } catch (error) {
       console.log(error);
@@ -98,13 +95,12 @@ export const useMenuTableStore = defineStore("menu", () => {
     }
   }
   return {
-    display,
+    setting,
     loading,
     loadingTarget,
     rowData,
     typeChange,
     dataList,
-    type,
     displayTarget,
     rowDataInsert,
     DeleteMenu,
@@ -112,7 +108,6 @@ export const useMenuTableStore = defineStore("menu", () => {
     optionLoading,
     isParent,
     AddMenu,
-    addParent,
     menuList,
     data,
     messageBox

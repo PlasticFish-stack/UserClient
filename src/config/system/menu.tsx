@@ -43,16 +43,15 @@ export function useColumns() {
   });
   const handleEdit = (_index: number, row: Menu) => {
     const rows = {
-      menu_id: row.menu_id,
-      menu_name: row.menu_name,
-      menu_desc: row.menu_desc,
-      menu_identifier: row.menu_identifier,
-      menu_path: row.menu_path,
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      identifier: row.identifier,
+      path: row.path,
       status: row.status,
-      menu_icon: row.menu_icon,
-      menu_component: row.menu_component,
-      menu_type: row.menu_type,
-      menu_sort: row.menu_sort,
+      icon: row.icon,
+      component: row.component,
+      sort: row.sort,
       parent_id: row.parent_id
     };
     console.log(rows, "rows");
@@ -62,16 +61,15 @@ export function useColumns() {
   };
   const handleAdd = (_index: number, row: Menu) => {
     const rows = {
-      menu_name: "",
-      menu_identifier: "",
-      menu_desc: "",
-      menu_path: "",
+      name: "",
+      identifier: "",
+      description: "",
+      path: "",
       status: true,
-      menu_icon: "",
-      menu_component: "",
-      menu_type: true,
-      menu_sort: 0,
-      parent_id: row.menu_id
+      icon: "",
+      component: "",
+      sort: 0,
+      parent_id: row.id
     };
     menuTableStore.displayTarget();
     menuTableStore.isParent(false);
@@ -79,7 +77,7 @@ export function useColumns() {
     menuTableStore.typeChange("add");
   };
   const handleDelete = (_index: number, row: Menu) => {
-    menuTableStore.DeleteMenu(row.menu_id);
+    menuTableStore.DeleteMenu(row.id);
   };
   const adaptiveConfig: AdaptiveConfig = {
     /** 表格距离页面底部的偏移量，默认值为 `96` */
@@ -95,31 +93,31 @@ export function useColumns() {
   const columns: TableColumnList = [
     {
       label: "菜单Id",
-      prop: "menu_id",
+      prop: "id",
       align: "left",
       width: 100
     },
     {
       label: "菜单名",
-      prop: "menu_name",
+      prop: "name",
       align: "left",
       width: 150
     },
     {
       label: "菜单简介",
-      prop: "menu_desc",
+      prop: "description",
       align: "left"
     },
     {
       label: "菜单标识",
-      prop: "menu_identifier",
+      prop: "identifier",
       headerAlign: "center",
       align: "center",
       width: 150
     },
     {
       label: "菜单路径",
-      prop: "menu_path",
+      prop: "path",
       headerAlign: "center",
       align: "center",
       width: 120,
@@ -129,21 +127,21 @@ export function useColumns() {
     },
     {
       label: "菜单图标",
-      prop: "menu_icon",
+      prop: "icon",
       headerAlign: "center",
       align: "center",
       width: 100
     },
     {
       label: "菜单模板",
-      prop: "menu_component",
+      prop: "component",
       headerAlign: "center",
       align: "center",
       width: 120
     },
     {
       label: "菜单排序",
-      prop: "menu_sort",
+      prop: "sort",
       headerAlign: "center",
       align: "center",
       width: 100,

@@ -16,53 +16,47 @@ const columns: PlusColumn[] = [
   {
     label: "菜单名称",
     width: 120,
-    prop: "menu_name",
+    prop: "name",
     valueType: "copy"
   },
   {
     label: "菜单标识",
     width: 120,
-    prop: "menu_identifier",
+    prop: "identifier",
     valueType: "copy"
   },
   {
     label: "菜单简介",
     width: 120,
-    prop: "menu_desc",
+    prop: "description",
     valueType: "copy"
   },
   {
     label: "菜单路径",
     width: 120,
-    prop: "menu_path",
+    prop: "path",
     valueType: "copy",
     hideInForm: menuTableStore.rowData.parent_id == 0 ? true : false
   },
   {
     label: "菜单图标",
     width: 120,
-    prop: "menu_icon",
+    prop: "icon",
     valueType: "copy"
   },
   {
     label: "菜单模板",
     width: 120,
-    prop: "menu_component",
+    prop: "component",
     valueType: "copy"
   },
   {
     label: "菜单排序",
     width: 120,
-    prop: "menu_sort",
+    prop: "sort",
     valueType: "copy",
     hideInForm: menuTableStore.rowData.parent_id == 0 ? false : true
   },
-  // {
-  //   label: "菜单或按钮",
-  //   width: 200,
-  //   prop: "menu_type",
-  //   valueType: "switch"
-  // },
   {
     label: "父菜单id",
     width: 120,
@@ -79,14 +73,12 @@ const columns: PlusColumn[] = [
 ];
 
 const handleConfirm = (values: any) => {
-  if (menuTableStore.type) {
+  if (menuTableStore.setting.type == "add") {
     menuTableStore.UpdateMenu(values);
+  } else if (menuTableStore.setting.type == "edit") {
+    menuTableStore.AddMenu(values);
   } else {
-    if (values.parent_id == 0) {
-      menuTableStore.AddMenu(values, true);
-    } else {
-      menuTableStore.AddMenu(values, false);
-    }
+    return;
   }
   visible.value = false;
 };
@@ -97,18 +89,17 @@ const colProps: Partial<Mutable<ColProps>> = {
   span: 12
 };
 onMounted(() => {
-  visible.value = menuTableStore.display;
+  visible.value = menuTableStore.setting.display;
   form.value = {
-    menu_id: menuTableStore.rowData.menu_id,
-    menu_name: menuTableStore.rowData.menu_name,
-    menu_desc: menuTableStore.rowData.menu_desc,
+    id: menuTableStore.rowData.id,
+    name: menuTableStore.rowData.name,
+    description: menuTableStore.rowData.description,
     status: menuTableStore.rowData.status,
-    menu_identifier: menuTableStore.rowData.menu_identifier,
-    menu_path: menuTableStore.rowData.menu_path,
-    menu_icon: menuTableStore.rowData.menu_icon,
-    menu_component: menuTableStore.rowData.menu_component,
-    menu_type: menuTableStore.rowData.menu_type,
-    menu_sort: menuTableStore.rowData.menu_sort,
+    identifier: menuTableStore.rowData.identifier,
+    path: menuTableStore.rowData.path,
+    icon: menuTableStore.rowData.icon,
+    component: menuTableStore.rowData.component,
+    sort: menuTableStore.rowData.sort,
     parent_id: menuTableStore.rowData.parent_id
   };
   console.log(menuTableStore.rowData, "rows");

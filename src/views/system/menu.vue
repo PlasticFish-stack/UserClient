@@ -18,15 +18,15 @@ const {
 const menuTableStore = useMenuTableStore();
 function addMenuForm() {
   const row = {
-    menu_name: "",
-    menu_identifier: "",
-    menu_path: "/null",
+    name: "",
+    identifier: "",
+    path: "/null",
     status: true,
-    menu_icon: "",
-    menu_component: "",
-    menu_type: false,
-    menu_sort: 1,
-    parent_id: 0
+    description: "",
+    icon: "",
+    component: "",
+    sort: 1,
+    parentid: 0
   };
   menuTableStore.displayTarget();
   menuTableStore.isParent(true);
@@ -47,7 +47,7 @@ onMounted(() => {
       adaptive
       border
       :adaptiveConfig="adaptiveConfig"
-      row-key="menu_id"
+      row-key="id"
       alignWhole="center"
       showOverflowTooltip
       :loading="menuTableStore.loading"
@@ -64,7 +64,7 @@ onMounted(() => {
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"
     />
-    <DialogForm v-if="menuTableStore.display" />
+    <DialogForm v-if="menuTableStore.setting.display" />
   </div>
 </template>
 

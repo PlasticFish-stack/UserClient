@@ -1,13 +1,13 @@
 import { http } from "@/utils/http";
 export type Menu = {
   /** id */
-  menu_id?: number;
+  id?: number;
   /** 角色名 */
-  menu_name: string;
-  menu_desc: string;
+  name: string;
+  description: string;
   /** 角色简介 */
-  menu_identifier?: string;
-  menu_path: string;
+  identifier?: string;
+  path: string;
   /** 角色状态 */
   status: boolean;
   /** 创建时间 */
@@ -15,10 +15,9 @@ export type Menu = {
   /** 修改时间 */
   update_time: Date;
   /** 角色标识 */
-  menu_icon: string;
-  menu_component: string;
-  menu_type: boolean;
-  menu_sort: number;
+  icon: string;
+  component: string;
+  sort: number;
   parent_id: number;
 };
 export type MenuResult = {
@@ -28,24 +27,12 @@ export type MenuResult = {
 
 /** 获取角色列表 */
 export const getMenu = (data?: object) => {
-  return http.request<MenuResult>("get", "/getmenus", { data });
+  return http.request<MenuResult>("get", "/menu/getall", { data });
 };
-export const addParentMenu = (data?: object) => {
+export const addMenu = (data?: object) => {
   return http.request<MenuResult>(
     "post",
-    "/addparentmenus",
-    { data },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    }
-  );
-};
-export const addChildMenu = (data?: object) => {
-  return http.request<MenuResult>(
-    "post",
-    "/addchildmenus",
+    "/menu/add",
     { data },
     {
       headers: {
