@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import "plus-pro-components/es/components/dialog-form/style/css";
 import {
   type PlusColumn,
@@ -7,19 +7,18 @@ import {
   PlusDialogForm
 } from "plus-pro-components";
 import { useRoleTableStore } from "@/store/modules/customise/role";
+import { FormRules } from "element-plus";
 const roleTableStore = useRoleTableStore();
 const visible = ref(false);
 const form = ref<FieldValues>(null);
 const columns: PlusColumn[] = [
   {
     label: "角色名称",
-    width: 120,
     prop: "name",
     valueType: "copy"
   },
   {
     label: "角色标识",
-    width: 120,
     prop: "identifier",
     valueType: "copy"
   },
@@ -28,6 +27,7 @@ const columns: PlusColumn[] = [
     prop: "description",
     valueType: "textarea",
     fieldProps: {
+      width: 180,
       maxlength: 200
       // showWordLimit: true,
       // autosize: { minRows: 2, maxRows: 4 }
@@ -35,11 +35,20 @@ const columns: PlusColumn[] = [
   },
   {
     label: "是否生效",
-    width: 100,
     prop: "status",
     valueType: "switch"
   }
 ];
+
+const rules = reactive<FormRules>({
+  name: [
+    {
+      required: true,
+      trigger: "blur",
+      message: "请输入角色名称"
+    }
+  ]
+});
 
 const handleConfirm = (values: any) => {
   if (roleTableStore.type) {
@@ -58,7 +67,7 @@ onMounted(() => {
     status: roleTableStore.rowData.status,
     identifier: roleTableStore.rowData.identifier
   };
-  console.log(roleTableStore.rowData, "rows");
+
   watch(
     () => visible.value,
     newVal => {
@@ -72,11 +81,17 @@ onMounted(() => {
     v-model:visible="visible"
     v-model="form"
     style="border-radius: 8px"
-    :form="{ columns }"
+    :form="{
+      columns,
+      rules,
+      labelWidth: '100px',
+      labelPosition: 'right'
+    }"
     @confirm="handleConfirm"
   >
     <template #dialog-header> 更改角色 </template>
     <template #dialog-footer="{ handleConfirm, handleCancel }">
+      <el-button @click="handleCancel">取消</el-button>
       <el-button
         type="primary"
         :loading="roleTableStore.optionLoading"
@@ -102,7 +117,6 @@ onMounted(() => {
         </template>
         确定
       </el-button>
-      <el-button type="warning" @click="handleCancel">取消</el-button>
     </template>
   </PlusDialogForm>
 </template>

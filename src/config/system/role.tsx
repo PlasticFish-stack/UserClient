@@ -49,6 +49,12 @@ export function useColumns() {
   const handleDelete = (_index: number, row: Role) => {
     roleTableStore.DeleteRole(row.id);
   };
+
+  const handleBingMenu = (row: Role) => {
+    const ref = roleTableStore.$state.roleMenuDialogRef;
+    ref.open(row);
+  };
+
   const adaptiveConfig: AdaptiveConfig = {
     /** 表格距离页面底部的偏移量，默认值为 `96` */
     offsetBottom: 80
@@ -134,6 +140,13 @@ export function useColumns() {
             onClick={() => handleEdit(index + 1, row)}
           >
             编辑
+          </el-button>
+          <el-button
+            type="success"
+            size="small"
+            onClick={() => handleBingMenu(row)}
+          >
+            绑定
           </el-button>
           <ElPopconfirm
             width="220"

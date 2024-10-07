@@ -12,6 +12,7 @@ import { message } from "@/utils/message";
 export const useRoleTableStore = defineStore("role", () => {
   const display = ref(false);
   const loading = ref(false);
+  const roleMenuDialogRef = ref();
   const rowData = ref<Role>(null);
   const type = ref(true);
   const optionLoading = ref(false);
@@ -102,6 +103,7 @@ export const useRoleTableStore = defineStore("role", () => {
     AddRole,
     roleList,
     data,
-    messageBox
+    messageBox,
+    roleMenuDialogRef
   };
 });

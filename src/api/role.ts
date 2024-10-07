@@ -25,38 +25,15 @@ export const getRole = (data?: object) => {
   return http.request<RoleResult>("get", "/role/getall", { data });
 };
 export const addRole = (data?: object) => {
-  return http.request<RoleResult>(
-    "post",
-    "/role/add",
-    { data },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    }
-  );
+  return http.request<RoleResult>("post", "/role/add", { data });
 };
 export const updateRole = (data?: object) => {
-  return http.request<RoleResult>(
-    "post",
-    "/role/update",
-    { data },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    }
-  );
+  return http.request<RoleResult>("post", "/role/update", { data });
 };
 export const deleteRole = (data?: object) => {
-  return http.request<RoleResult>(
-    "post",
-    "/role/delete",
-    { data },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    }
-  );
+  return http.request<RoleResult>("post", "/role/delete", { data });
+};
+
+export const updateRoleMenu = (data?: object) => {
+  return http.request<RoleResult>("post", "/role/bind", { data });
 };
