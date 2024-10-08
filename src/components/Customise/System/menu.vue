@@ -60,7 +60,7 @@ const columns: PlusColumn[] = [
   {
     label: "父菜单id",
     width: 120,
-    prop: "parent_id",
+    prop: "parentId",
     valueType: "copy",
     hideInForm: menuTableStore.setting.isParent
   },
@@ -138,7 +138,7 @@ onMounted(() => {
     icon: menuTableStore.rowData.icon,
     component: menuTableStore.rowData.component,
     sort: menuTableStore.rowData.sort,
-    parent_id: menuTableStore.rowData.parent_id
+    parentId: menuTableStore.rowData.parentId
   };
   console.log(menuTableStore.rowData, "rows");
   watch(

@@ -43,3 +43,15 @@ export const getLogin = (data?: object) => {
 export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>("post", "/refresh", { data });
 };
+
+export const getUser = (data?: object) => {
+  return http.request<UserResult>("get", "/user/getall", { data });
+};
+
+export const updateUserRole = (data?: object) => {
+  return http.request<UserResult>("post", "/user/bind", { data });
+};
+
+export const getBindRole = (data?: object) => {
+  return http.request<UserResult>("get", "/user/getbind", { data });
+};

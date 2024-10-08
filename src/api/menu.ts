@@ -11,14 +11,15 @@ export type Menu = {
   /** 角色状态 */
   status: boolean;
   /** 创建时间 */
-  create_time: Date;
+  createTime: Date;
   /** 修改时间 */
-  update_time: Date;
+  updateTime: Date;
   /** 角色标识 */
   icon: string;
   component: string;
   sort: number;
-  parent_id: number;
+  parentId: number;
+  children: Menu[];
 };
 export type MenuResult = {
   success: boolean;

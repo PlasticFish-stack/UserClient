@@ -106,7 +106,7 @@ export function useColumns() {
       ),
       cellRenderer: ({ row }) => (
         <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.create_time)}</span>
+          <span>{formatGolangDate(row.createTime)}</span>
         </div>
       )
     },
@@ -125,7 +125,7 @@ export function useColumns() {
       ),
       cellRenderer: ({ row }) => (
         <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.update_time)}</span>
+          <span>{formatGolangDate(row.updateTime)}</span>
         </div>
       )
     },

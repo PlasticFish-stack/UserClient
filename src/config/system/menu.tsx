@@ -52,13 +52,13 @@ export function useColumns() {
       icon: row.icon,
       component: row.component,
       sort: row.sort,
-      parent_id: row.parent_id
+      parentId: row.parentId
     };
     console.log(rows, "rows");
     menuTableStore.displayTarget();
     menuTableStore.rowDataInsert(rows);
     menuTableStore.typeChange("edit");
-    if (row.parent_id == 0) {
+    if (row.parentId == 0) {
       menuTableStore.isParent(true);
     } else {
       menuTableStore.isParent(false);
@@ -74,7 +74,7 @@ export function useColumns() {
       icon: "",
       component: "",
       sort: 0,
-      parent_id: row.id
+      parentId: row.id
     };
     menuTableStore.displayTarget();
     menuTableStore.isParent(false);
@@ -177,7 +177,7 @@ export function useColumns() {
       ),
       cellRenderer: ({ row }) => (
         <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.create_time)}</span>
+          <span>{formatGolangDate(row.createTime)}</span>
         </div>
       )
     },
@@ -196,7 +196,7 @@ export function useColumns() {
       ),
       cellRenderer: ({ row }) => (
         <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.update_time)}</span>
+          <span>{formatGolangDate(row.updateTime)}</span>
         </div>
       )
     },

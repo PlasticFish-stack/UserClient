@@ -9,9 +9,9 @@ export type Role = {
   /** 角色状态 */
   status: boolean;
   /** 创建时间 */
-  create_time: Date;
+  createTime: Date;
   /** 修改时间 */
-  update_time: Date;
+  updateTime: Date;
   /** 角色标识 */
   identifier: string;
 };
@@ -36,4 +36,8 @@ export const deleteRole = (data?: object) => {
 
 export const updateRoleMenu = (data?: object) => {
   return http.request<RoleResult>("post", "/role/bind", { data });
+};
+
+export const getBindMenu = (data?: object) => {
+  return http.request<RoleResult>("get", "/role/getbind", { data });
 };
