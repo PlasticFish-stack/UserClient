@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoleTableStore } from "@/store/modules/customise/role";
 import { useColumns } from "@/config/system/role";
 import DialogForm from "@/components/Customise/System/role.vue";
+import AddRoleMenuDialog from "@/components/Customise/System/AddRoleMenuDialog.vue";
 
 defineOptions({
   name: "SystemRole"
@@ -16,6 +17,9 @@ const {
   onCurrentChange
 } = useColumns();
 const roleTableStore = useRoleTableStore();
+
+const roleMenuDialogElement = ref(null);
+
 function addRoleForm() {
   const row = {
     role_name: "",
@@ -29,6 +33,10 @@ function addRoleForm() {
 }
 onMounted(() => {
   roleTableStore.roleList();
+
+  if (roleMenuDialogElement.value) {
+    roleTableStore.$state.roleMenuDialogRef = roleMenuDialogElement.value;
+  }
 });
 </script>
 
@@ -40,7 +48,7 @@ onMounted(() => {
       style="border-radius: 8px"
       adaptive
       :adaptiveConfig="adaptiveConfig"
-      row-key="role_id"
+      row-key="id"
       alignWhole="center"
       showOverflowTooltip
       :loading="roleTableStore.loading"
@@ -57,6 +65,7 @@ onMounted(() => {
       @page-current-change="onCurrentChange"
     />
     <DialogForm v-if="roleTableStore.display" />
+    <AddRoleMenuDialog ref="roleMenuDialogElement" />
   </div>
 </template>
 <style>

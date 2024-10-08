@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import "plus-pro-components/es/components/dialog-form/style/css";
 import {
   type PlusColumn,
@@ -8,7 +8,7 @@ import {
   Mutable
 } from "plus-pro-components";
 import { useMenuTableStore } from "@/store/modules/customise/menu";
-import { ColProps, RowProps } from "element-plus";
+import { ColProps, FormRules, RowProps } from "element-plus";
 const menuTableStore = useMenuTableStore();
 const visible = ref(false);
 const form = ref<FieldValues>(null);
@@ -72,6 +72,44 @@ const columns: PlusColumn[] = [
   }
 ];
 
+const rules = reactive<FormRules>({
+  name: [
+    {
+      required: true,
+      trigger: "blur",
+      message: "请输入菜单名称"
+    }
+  ],
+  identifier: [
+    {
+      required: true,
+      trigger: "blur",
+      message: "请输入菜单标识"
+    }
+  ],
+  icon: [
+    {
+      required: true,
+      trigger: "blur",
+      message: "请选择菜单图标"
+    }
+  ],
+  component: [
+    {
+      required: true,
+      trigger: "blur",
+      message: "请输入菜单模板"
+    }
+  ],
+  sort: [
+    {
+      required: true,
+      trigger: "blur",
+      message: "请输入菜单排序"
+    }
+  ]
+});
+
 const handleConfirm = (values: any) => {
   if (menuTableStore.setting.type == "add") {
     menuTableStore.AddMenu(values);
@@ -116,7 +154,7 @@ onMounted(() => {
     v-model:visible="visible"
     v-model="form"
     style="border-radius: 8px"
-    :form="{ columns }"
+    :form="{ columns, rules, labelWidth: '100px', labelPosition: 'right' }"
     @confirm="handleConfirm"
   >
     <template #dialog-header>
