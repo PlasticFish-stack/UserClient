@@ -94,6 +94,11 @@ export function useColumns() {
     /** 表头的 `z-index`，默认值为 `100` */
     // zIndex: 100
   };
+
+  const indexMethod = (index: number) => {
+    return index + 1;
+  };
+
   const dataList = ref([]);
   const columns: TableColumnList = [
     // {
@@ -102,6 +107,10 @@ export function useColumns() {
     //   align: "left",
     //   width: 100
     // },
+    {
+      type: "index",
+      index: indexMethod
+    },
     {
       label: "菜单名",
       prop: "name",

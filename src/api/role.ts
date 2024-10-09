@@ -39,5 +39,5 @@ export const updateRoleMenu = (data?: object) => {
 };
 
 export const getBindMenu = (data?: object) => {
-  return http.request<RoleResult>("get", "/role/getbind", { data });
+  return http.request<RoleResult>("get", "/role/getbind", { params: data });
 };

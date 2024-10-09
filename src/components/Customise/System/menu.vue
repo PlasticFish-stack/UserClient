@@ -9,9 +9,11 @@ import {
 } from "plus-pro-components";
 import { useMenuTableStore } from "@/store/modules/customise/menu";
 import { ColProps, FormRules, RowProps } from "element-plus";
+import { IconSelect } from "@/components/ReIcon";
+
 const menuTableStore = useMenuTableStore();
 const visible = ref(false);
-const form = ref<FieldValues>(null);
+const form = ref<any>(null);
 const columns: PlusColumn[] = [
   {
     label: "菜单名称",
@@ -120,12 +122,18 @@ const handleConfirm = (values: any) => {
   }
   visible.value = false;
 };
+
+const onCancel = () => {
+  visible.value = false;
+};
+
 const rowProps: Partial<Mutable<RowProps>> = {
   gutter: 20
 };
 const colProps: Partial<Mutable<ColProps>> = {
   span: 12
 };
+
 onMounted(() => {
   visible.value = menuTableStore.setting.display;
   form.value = {
@@ -135,12 +143,14 @@ onMounted(() => {
     status: menuTableStore.rowData.status,
     identifier: menuTableStore.rowData.identifier,
     path: menuTableStore.rowData.path,
-    icon: menuTableStore.rowData.icon,
+    icon:
+      menuTableStore.rowData.icon.indexOf("000") === 0
+        ? ""
+        : menuTableStore.rowData.icon,
     component: menuTableStore.rowData.component,
     sort: menuTableStore.rowData.sort,
     parentId: menuTableStore.rowData.parentId
   };
-  console.log(menuTableStore.rowData, "rows");
   watch(
     () => visible.value,
     newVal => {
@@ -156,7 +166,11 @@ onMounted(() => {
     style="border-radius: 8px"
     :form="{ columns, rules, labelWidth: '100px', labelPosition: 'right' }"
     @confirm="handleConfirm"
+    @cancel="onCancel"
   >
+    <template #plus-field-icon>
+      <IconSelect v-model="form.icon" style="width: 100%" />
+    </template>
     <template #dialog-header>
       {{
         menuTableStore.setting.type == "add"
@@ -167,32 +181,14 @@ onMounted(() => {
       }}
     </template>
     <template #dialog-footer="{ handleConfirm, handleCancel }">
+      <el-button @click="handleCancel">取消</el-button>
       <el-button
         type="primary"
         :loading="menuTableStore.optionLoading"
         @click="handleConfirm"
       >
-        <template #loading>
-          <div class="custom-loading">
-            <svg class="circular" viewBox="-10, -10, 50, 50">
-              <path
-                class="path"
-                d="
-            M 30 15
-            L 28 17
-            M 25.61 25.61
-            A 15 15, 0, 0, 1, 15 30
-            A 15 15, 0, 1, 1, 27.99 7.5
-            L 15 15
-          "
-                style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"
-              />
-            </svg>
-          </div>
-        </template>
         确定
       </el-button>
-      <el-button type="warning" @click="handleCancel">取消</el-button>
     </template>
   </PlusDialogForm>
 </template>
