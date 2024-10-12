@@ -1,4 +1,5 @@
 import { http } from "@/utils/http";
+import type { UserData } from "@/views/system/UserPage/CoreModules/types";
 
 export type UserResult = {
   success: boolean;
@@ -34,6 +35,11 @@ export type RefreshTokenResult = {
   };
 };
 
+interface UserPageResult {
+  success: boolean;
+  data: UserData;
+}
+
 /** 登录 */
 export const getLogin = (data?: object) => {
   return http.request<UserResult>("post", "/login", { data });
@@ -44,8 +50,12 @@ export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>("post", "/refresh", { data });
 };
 
-export const getUser = (data?: object) => {
-  return http.request<UserResult>("get", "/user/getall", { data });
+export const getUser = () => {
+  return http.request<UserPageResult>("get", "/user/getall");
+};
+
+export const deleteUser = (data?: object) => {
+  return http.request<UserPageResult>("post", "/user/delete", { data });
 };
 
 export const updateUserRole = (data?: object) => {
