@@ -15,7 +15,7 @@ export const useUserTableStore = defineStore("user", (): UserStoreReturn => {
     optionLoading: false
   });
 
-  const roleMenuDialogRef = ref<VueElement | VNode | JSX.Element>(null);
+  const userRoleDialogRef = ref<VueElement | VNode | JSX.Element>(null);
 
   const getUserPage = async () => {
     const res = await getUser();
@@ -26,7 +26,18 @@ export const useUserTableStore = defineStore("user", (): UserStoreReturn => {
   };
 
   const addUserForm = () => {
+    const form = {
+      id: 9999999,
+      name: "",
+      nickname: "",
+      password: "",
+      avatar: "",
+      status: true
+    };
     state.userDialog = true;
+    state.rowData = form;
+
+    typeChange("add");
   };
 
   const displayTarget = (displayBool?: boolean) => {
@@ -43,7 +54,7 @@ export const useUserTableStore = defineStore("user", (): UserStoreReturn => {
   };
 
   const typeChange = (t: "add" | "edit") => {
-    if (t == "add") {
+    if (t === "add") {
       state.type = false;
     } else {
       state.type = true;
@@ -67,6 +78,10 @@ export const useUserTableStore = defineStore("user", (): UserStoreReturn => {
     state.loading = bool;
   };
 
+  const userRoleDiaRef = (container: any) => {
+    userRoleDialogRef.value = container;
+  };
+
   return {
     state,
     getUserPage,
@@ -75,7 +90,8 @@ export const useUserTableStore = defineStore("user", (): UserStoreReturn => {
     rowDataInsert,
     typeChange,
     DeleteRole,
-    roleMenuDialogRef,
-    loadingTarget
+    userRoleDialogRef,
+    loadingTarget,
+    userRoleDiaRef
   };
 });

@@ -2,6 +2,8 @@
 import { onMounted, computed, ref } from "vue";
 import { useUserTableStore } from "./CoreModules/store";
 import { useColumns } from "./CoreModules/config";
+import AddUserFormDialog from "./components/AddUserFormDialog.vue";
+import AddUserRoleDialog from "./components/AddUserRoleDialog.vue";
 defineOptions({
   name: "SystemUser"
 });
@@ -49,6 +51,8 @@ onMounted(() => {
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"
     />
+    <AddUserFormDialog />
+    <AddUserRoleDialog :ref="userTableStore.userRoleDiaRef" />
   </div>
 </template>
 <style lang="scss" scoped>

@@ -8,17 +8,17 @@ export type User = {
   /** 昵称 */
   nickname: string;
   /** 上次登录Ip */
-  lastLoginIp: string;
+  lastLoginIp?: string;
   /** 上次登录时间 */
-  lastLoginTime: Date;
+  lastLoginTime?: Date;
   /** 密码 */
-  password: "";
+  password: string;
   /** 使用状态 */
   status: boolean;
   /** 创建时间 */
-  createTime: Date;
+  createTime?: Date;
   /** 更新时间 */
-  updateTime: Date;
+  updateTime?: Date;
 };
 
 export type UserData = User[];
@@ -40,6 +40,7 @@ export interface UserStoreReturn {
   rowDataInsert: (row: User) => void;
   typeChange: (t: "add" | "edit") => void;
   DeleteRole: (data: { id: User["id"]; name: User["name"] }) => void;
-  roleMenuDialogRef: any;
+  userRoleDialogRef: any;
   loadingTarget: (bool?: boolean) => void;
+  userRoleDiaRef: (container: any) => void;
 }

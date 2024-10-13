@@ -53,8 +53,9 @@ export function useColumns() {
   };
 
   const handleBingMenu = (row: User) => {
-    const ref = userTableStore.$state.roleMenuDialogRef;
-    ref.open(row);
+    const ref = userTableStore.$state.userRoleDialogRef;
+    ref.open();
+    userTableStore.rowDataInsert(row);
   };
 
   const timeRenderContainer = (key: string, title: string): any => {
@@ -90,10 +91,6 @@ export function useColumns() {
   };
   const dataList = ref([]);
   const columns: TableColumnList = [
-    // {
-    //   label: "用户Id",
-    //   prop: "id"
-    // },
     {
       label: "用户名",
       prop: "name"
@@ -134,7 +131,9 @@ export function useColumns() {
           <el-button
             type="primary"
             size="small"
-            onClick={() => handleEdit(index + 1, row)}
+            onClick={() => {
+              handleEdit(index + 1, row);
+            }}
           >
             编辑
           </el-button>
