@@ -63,7 +63,7 @@ export const updateUserRole = (data?: object) => {
 };
 
 export const getBindRole = (data?: object) => {
-  return http.request<UserResult>("get", "/user/getbind", { data });
+  return http.request<UserPageResult>("get", "/user/getbind", { params: data });
 };
 export const updateUser = (data?: object) => {
   return http.request<UserResult>("post", "/user/update", { data });

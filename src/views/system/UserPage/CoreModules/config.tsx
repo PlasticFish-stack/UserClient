@@ -54,7 +54,7 @@ export function useColumns() {
 
   const handleBingMenu = (row: User) => {
     const ref = userTableStore.$state.userRoleDialogRef;
-    ref.open();
+    ref.open(row);
     userTableStore.rowDataInsert(row);
   };
 

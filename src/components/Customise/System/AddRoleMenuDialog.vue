@@ -30,7 +30,13 @@
 
     <template #dialog-footer="{ handleConfirm, handleCancel }">
       <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="handleConfirm"> 确定 </el-button>
+      <el-button
+        v-loading="state.confirmLoading"
+        type="primary"
+        @click="handleConfirm"
+      >
+        确定
+      </el-button>
     </template>
   </PlusDialogForm>
 </template>
@@ -124,8 +130,8 @@ const handleConfirm = () => {
   state.confirmLoading = true;
 
   updateRoleMenu({
-    role_id: state.curRoleMes.id,
-    menu_id: (state.formData.menuIds as Array<Menu>).map(item => item.id)
+    roleId: state.curRoleMes.id,
+    menuId: (state.formData.menuIds as Array<Menu>).map(item => item.id)
   })
     .then(res => {
       if (res.success) {
