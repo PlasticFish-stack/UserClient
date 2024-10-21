@@ -5,18 +5,14 @@ import { getCurrency } from "@/api/currency";
 
 export const useCurrencyStore = defineStore("currency", () => {
   const store = reactive<StateProps>({
-    currencyData: []
+    currencyData: [],
+    rowData: null
   });
 
   const initCurrency = async () => {
     const res = await getCurrency();
     if (res.success) {
       store.currencyData = res.data;
-
-      console.log(
-        "==========",
-        res.data.map(item => item.countryIcon)
-      );
     }
   };
 

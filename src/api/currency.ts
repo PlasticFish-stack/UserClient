@@ -20,3 +20,11 @@ interface CurrencyResult {
 export const getCurrency = () => {
   return http.request<CurrencyResult>("get", "/rate/get");
 };
+
+export const synchronousCurrency = () => {
+  return http.request<CurrencyResult>("post", "/rate/getapi");
+};
+
+export const updateCurrency = (data: any) => {
+  return http.request<CurrencyResult>("post", "/rate/update", { data });
+};

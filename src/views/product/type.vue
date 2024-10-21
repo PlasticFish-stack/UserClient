@@ -5,5 +5,5 @@ defineOptions({
 </script>
 
 <template>
-  <h1>产品类别12332132131</h1>
+  <h1>产品类别</h1>
 </template>
