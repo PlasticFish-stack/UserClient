@@ -12,7 +12,7 @@ export const useCurrencyStore = defineStore("currency", () => {
   const initCurrency = async () => {
     const res = await getCurrency();
     if (res.success) {
-      store.currencyData = res.data;
+      store.currencyData = res.data.sort((a, b) => a.sort - b.sort);
     }
   };
 

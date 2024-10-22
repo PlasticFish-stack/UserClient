@@ -45,7 +45,10 @@ const columns: PlusColumn[] = [
   {
     label: "排序",
     prop: "sort",
-    valueType: "input-number"
+    valueType: "input-number",
+    fieldProps: {
+      min: 0
+    }
   }
 ];
 
@@ -67,6 +70,8 @@ const state = reactive(cloneDeep(defaultState));
 
 const handleCancel = () => {
   resetReactiveState(state, defaultState);
+
+  state.visible = false;
 };
 
 const handleConfirm = async () => {
@@ -81,23 +86,20 @@ const handleConfirm = async () => {
 
   if (res.success) {
     successMes();
+    handleCancel();
+    currencyStore.initCurrency();
   }
 };
 
 const open = () => {
   const row = currencyStore.$state.store.rowData;
-  const { currencyName, countryIcon, descriptionCn, descriptionEn } = row;
-  console.log("+===========", {
-    currencyName,
-    countryIcon,
-    descriptionCn,
-    descriptionEn
-  });
+  const { currencyName, countryIcon, descriptionCn, descriptionEn, sort } = row;
   state.form = {
     currencyName,
     countryIcon,
     descriptionCn,
-    descriptionEn
+    descriptionEn,
+    sort
   };
 
   state.visible = true;

@@ -5,6 +5,7 @@ import { Edit } from "@element-plus/icons-vue";
 import CurrencyDialog from "./components/CurrencyDialog.vue";
 import { CurrencyTypes, synchronousCurrency } from "@/api/currency";
 import { cloneDeep } from "@pureadmin/utils";
+import Icon from "./components/Icon.vue";
 import CN from "@/assets/flags/4x3/cn.svg?component";
 
 defineComponent({
@@ -29,7 +30,6 @@ const state = reactive(cloneDeep(defaultState));
 const currencyData = computed(() => currencyStore.$state.store.currencyData);
 
 const editCurrency = (row: CurrencyTypes) => {
-  console.log("====", row);
   currencyStore.$state.store.rowData = row;
   currencyDiaRef.value.open();
 };
@@ -50,7 +50,7 @@ onMounted(() => {
   <div class="currency-warpper main">
     <div class="uptate-currency-warpper">
       <el-button
-        v-loading="state.synchronousLoading"
+        :loading="state.synchronousLoading"
         type="primary"
         @click="handleSynchronousCurrency"
         >同步货币信息</el-button
@@ -68,9 +68,11 @@ onMounted(() => {
         :xl="2"
       >
         <div class="currency-container">
-          <!-- <img :src="item.countryIcon" alt="" /> -->
-          <!-- <img :src="CN" alt="China Flag" /> -->
-          <CN class="CN" />
+          <!-- {{ item.countryIcon }} -->
+          <!-- <CN class="CN" /> -->
+          <div class="svg-container">
+            <Icon :name="item.countryIcon" />
+          </div>
 
           <div class="name">{{ item.currencyName }}</div>
           <div class="des">{{ item.descriptionCn || "-" }}</div>
@@ -118,14 +120,14 @@ onMounted(() => {
       }
     }
 
-    img {
+    .svg-container {
       width: 100px;
       height: 60px;
     }
 
     .name,
     .des {
-      max-width: calc(100% - 40px);
+      max-width: calc(100% - 10px);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowarp;

@@ -10,6 +10,8 @@ export type CurrencyTypes = {
   currencyName: string;
   descriptionCn: string;
   descriptionEn: string;
+  ProductCost: string;
+  sort: number;
 };
 
 interface CurrencyResult {
