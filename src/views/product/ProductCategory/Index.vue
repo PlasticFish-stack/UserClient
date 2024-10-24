@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
+import { useProductCategoryStore } from "./modules/store";
 
 defineComponent({
   name: "ProductCategory"
+});
+const categoryStore = useProductCategoryStore();
+
+onMounted(() => {
+  categoryStore.initCategory();
 });
 </script>
 
