@@ -1,0 +1,186 @@
+import { reactive, ref } from "vue";
+import { useProductCategoryStore } from "./store";
+import type {
+  AdaptiveConfig,
+  LoadingConfig,
+  PaginationProps
+} from "@pureadmin/table";
+import { ElPopconfirm } from "element-plus";
+import { formatGolangDate } from "@/utils/time/date";
+import { delay } from "@pureadmin/utils";
+
+export function useColumns() {
+  const categoryStore = useProductCategoryStore();
+  const display = ref(false);
+
+  const loadingConfig = reactive<LoadingConfig>({
+    text: "正在加载第一页...",
+    viewBox: "-10, -10, 50, 50",
+    spinner: `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `
+    // svg: "",
+    // background: rgba()
+  });
+  const pagination = reactive<PaginationProps>({
+    pageSize: 20,
+    currentPage: 1,
+    pageSizes: [20, 40, 60],
+    total: 1,
+    align: "center",
+    background: true,
+    size: "default"
+  });
+
+  const adaptiveConfig: AdaptiveConfig = {
+    /** 表格距离页面底部的偏移量，默认值为 `96` */
+    offsetBottom: 80
+    /** 是否固定表头，默认值为 `true`（如果不想固定表头，fixHeader设置为false并且表格要设置table-layout="auto"） */
+    // fixHeader: true
+    /** 页面 `resize` 时的防抖时间，默认值为 `60` ms */
+    // timeout: 60
+    /** 表头的 `z-index`，默认值为 `100` */
+    // zIndex: 100
+  };
+
+  const indexMethod = (index: number) => {
+    return index + 1;
+  };
+
+  const columns = reactive<TableColumnList>([
+    {
+      type: "index",
+      index: indexMethod
+    },
+    {
+      label: "类别名称",
+      prop: "name",
+      headerAlign: "left",
+      align: "left"
+    },
+    {
+      label: "类别简介",
+      prop: "description",
+      align: "left"
+    },
+    {
+      label: "汇率",
+      headerAlign: "center",
+      prop: "tax",
+      align: "center",
+      width: 100,
+      cellRenderer: ({ row }) => <el-tag type="success">汇率</el-tag>
+    },
+    {
+      prop: "createTime",
+      // width: 180,
+      headerRenderer: () => (
+        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
+          <div style="position: absolute; left:0"></div>
+          <div>
+            <span>创建时间</span>
+          </div>
+        </div>
+      ),
+      cellRenderer: ({ row }) => (
+        <div style="display: flex; justify-content: center;align-items: center">
+          <span>{formatGolangDate(row.createTime)}</span>
+        </div>
+      )
+    },
+    {
+      prop: "updateTime",
+      // width: 180,
+      headerRenderer: () => (
+        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
+          <div style="position: absolute; left:0"></div>
+          <div>
+            <span>更新时间</span>
+          </div>
+        </div>
+      ),
+      cellRenderer: ({ row }) => (
+        <div style="display: flex; justify-content: center;align-items: center">
+          <span>{formatGolangDate(row.updateTime)}</span>
+        </div>
+      )
+    },
+    {
+      label: "操作选项",
+      prop: "",
+      align: "center",
+      headerAlign: "center",
+      width: 260,
+      cellRenderer: ({ index, row }) => (
+        <>
+          <el-button
+            type="success"
+            size="small"
+            // onClick={() => handleAdd(index + 1, row)}
+          >
+            新增子类别
+          </el-button>
+          <el-button
+            type="primary"
+            size="small"
+            // onClick={() => handleEdit(index + 1, row)}
+          >
+            编辑
+          </el-button>
+          <ElPopconfirm
+            width="220"
+            title="是否要删除该角色"
+            confirm-button-text="删除"
+            cancel-button-text="返回"
+            confirmButtonType="danger"
+            // onConfirm={() => handleDelete(index + 1, row)}
+            v-slots={{
+              reference: () => (
+                <el-button type="danger" size="small">
+                  {" "}
+                  删除
+                </el-button>
+              )
+            }}
+          ></ElPopconfirm>
+        </>
+      )
+    }
+  ]);
+
+  function displayTarget() {
+    display.value = !display.value;
+    console.log(display.value);
+  }
+
+  function onSizeChange(val) {
+    console.log("onSizeChange", val);
+  }
+
+  function onCurrentChange(val) {
+    loadingConfig.text = `正在加载第${val}页...`;
+    categoryStore.loadingTarget(true);
+    delay().then(() => {
+      categoryStore.loadingTarget(false);
+    });
+    categoryStore.loadingTarget(false);
+  }
+
+  return {
+    columns,
+    display,
+    loadingConfig,
+    pagination,
+    adaptiveConfig,
+    displayTarget,
+    onSizeChange,
+    onCurrentChange
+  };
+}

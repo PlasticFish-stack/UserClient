@@ -7,7 +7,8 @@ import { resetReactiveState } from "@/utils/globalUtils";
 
 export const useProductCategoryStore = defineStore("ProductCategory", () => {
   const defaultState: StateProps = {
-    categoryData: []
+    categoryData: [],
+    loading: false
   };
 
   const state = reactive<StateProps>(cloneDeep(defaultState));
@@ -24,9 +25,14 @@ export const useProductCategoryStore = defineStore("ProductCategory", () => {
     }
   };
 
+  const loadingTarget = (bool: boolean) => {
+    state.loading = bool;
+  };
+
   return {
     state,
     initCategory,
-    resetState
+    resetState,
+    loadingTarget
   };
 });
