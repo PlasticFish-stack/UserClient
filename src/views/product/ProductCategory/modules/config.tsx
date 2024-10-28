@@ -1,4 +1,4 @@
-import { reactive, ref } from "vue";
+import { inject, reactive, ref } from "vue";
 import { useProductCategoryStore } from "./store";
 import type {
   AdaptiveConfig,
@@ -8,10 +8,17 @@ import type {
 import { ElPopconfirm } from "element-plus";
 import { formatGolangDate } from "@/utils/time/date";
 import { delay } from "@pureadmin/utils";
+import type {
+  CategoryFormulasTypes,
+  CategoryTypes
+} from "@/api/productCategory";
 
 export function useColumns() {
   const categoryStore = useProductCategoryStore();
   const display = ref(false);
+  const edit = ref(false);
+
+  const categoryRef = inject("categoryRef");
 
   const loadingConfig = reactive<LoadingConfig>({
     text: "正在加载第一页...",
@@ -54,6 +61,32 @@ export function useColumns() {
     return index + 1;
   };
 
+  const targetScript = (row: CategoryTypes, f: CategoryFormulasTypes) => {
+    const tax = String(row.tax);
+    const script = f.formula.replace(/n/g, tax);
+    if (!script) return NaN;
+
+    return eval(script) + "%";
+  };
+
+  const displayTarget = () => {
+    display.value = !display.value;
+    edit.value = false;
+  };
+
+  const onSizeChange = val => {
+    console.log("onSizeChange", val);
+  };
+
+  function onCurrentChange(val) {
+    loadingConfig.text = `正在加载第${val}页...`;
+    categoryStore.loadingTarget(true);
+    delay().then(() => {
+      categoryStore.loadingTarget(false);
+    });
+    categoryStore.loadingTarget(false);
+  }
+
   const columns = reactive<TableColumnList>([
     {
       type: "index",
@@ -75,12 +108,29 @@ export function useColumns() {
       headerAlign: "center",
       prop: "tax",
       align: "center",
-      width: 100,
-      cellRenderer: ({ row }) => <el-tag type="success">汇率</el-tag>
+      cellRenderer: ({ row }) => (
+        <>
+          {row.formulas.length === 0 ? (
+            <el-tag type="success">汇率</el-tag>
+          ) : (
+            row.formulas.map(f => (
+              <el-tag
+                type="success"
+                key={f.id}
+                style={{
+                  marginLeft: "4px"
+                }}
+              >
+                {`${f.nickname}：${targetScript(row, f)}`}
+              </el-tag>
+            ))
+          )}
+        </>
+      )
     },
     {
       prop: "createTime",
-      // width: 180,
+      width: 180,
       headerRenderer: () => (
         <div style="display: flex; justify-content: center; align-items: center;position: relative;">
           <div style="position: absolute; left:0"></div>
@@ -97,7 +147,7 @@ export function useColumns() {
     },
     {
       prop: "updateTime",
-      // width: 180,
+      width: 180,
       headerRenderer: () => (
         <div style="display: flex; justify-content: center; align-items: center;position: relative;">
           <div style="position: absolute; left:0"></div>
@@ -118,25 +168,21 @@ export function useColumns() {
       align: "center",
       headerAlign: "center",
       width: 260,
-      cellRenderer: ({ index, row }) => (
+      cellRenderer: ({ row }) => (
         <>
-          <el-button
-            type="success"
-            size="small"
-            // onClick={() => handleAdd(index + 1, row)}
-          >
+          <el-button type="success" size="small" onClick={() => handleAdd(row)}>
             新增子类别
           </el-button>
           <el-button
             type="primary"
             size="small"
-            // onClick={() => handleEdit(index + 1, row)}
+            onClick={() => handleEdit(row)}
           >
             编辑
           </el-button>
           <ElPopconfirm
             width="220"
-            title="是否要删除该角色"
+            title="是否要删除该类别"
             confirm-button-text="删除"
             cancel-button-text="返回"
             confirmButtonType="danger"
@@ -155,27 +201,22 @@ export function useColumns() {
     }
   ]);
 
-  function displayTarget() {
-    display.value = !display.value;
-    console.log(display.value);
+  function handleAdd(row: CategoryTypes) {
+    console.log("========", categoryRef);
+    /* categoryStore.curCategoryChange(row);
+    categoryStore.displayTarget(true);
+    categoryStore.editTarget(true); */
   }
 
-  function onSizeChange(val) {
-    console.log("onSizeChange", val);
-  }
-
-  function onCurrentChange(val) {
-    loadingConfig.text = `正在加载第${val}页...`;
-    categoryStore.loadingTarget(true);
-    delay().then(() => {
-      categoryStore.loadingTarget(false);
-    });
-    categoryStore.loadingTarget(false);
+  function handleEdit(row: CategoryTypes) {
+    handleAdd(row);
+    edit.value = true;
   }
 
   return {
     columns,
     display,
+    edit,
     loadingConfig,
     pagination,
     adaptiveConfig,

@@ -1,4 +1,4 @@
-import { getCategory } from "@/api/productCategory";
+import { type CategoryTypes, getCategory } from "@/api/productCategory";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 import type { StateProps } from "./types";
@@ -8,7 +8,10 @@ import { resetReactiveState } from "@/utils/globalUtils";
 export const useProductCategoryStore = defineStore("ProductCategory", () => {
   const defaultState: StateProps = {
     categoryData: [],
-    loading: false
+    loading: false,
+    display: false,
+    edit: false,
+    curCategory: null
   };
 
   const state = reactive<StateProps>(cloneDeep(defaultState));
@@ -28,11 +31,24 @@ export const useProductCategoryStore = defineStore("ProductCategory", () => {
   const loadingTarget = (bool: boolean) => {
     state.loading = bool;
   };
+  const displayTarget = (bool: boolean) => {
+    state.loading = bool;
+  };
+  const editTarget = (bool: boolean) => {
+    state.loading = bool;
+  };
+
+  const curCategoryChange = (row: CategoryTypes) => {
+    state.curCategory = row;
+  };
 
   return {
     state,
     initCategory,
     resetState,
-    loadingTarget
+    loadingTarget,
+    curCategoryChange,
+    displayTarget,
+    editTarget
   };
 });
