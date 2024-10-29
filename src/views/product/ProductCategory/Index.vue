@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineComponent, onMounted, provide, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useProductCategoryStore } from "./modules/store";
 import { useColumns } from "./modules/config";
 import AddCategoryDialog from "./components/AddCategoryDialog.vue";
@@ -9,6 +9,7 @@ defineComponent({
 });
 const categoryStore = useProductCategoryStore();
 
+const categoryRef = ref(null);
 const {
   columns,
   loadingConfig,
@@ -16,14 +17,10 @@ const {
   adaptiveConfig,
   onSizeChange,
   onCurrentChange
-} = useColumns();
-
-const categoryRef = ref(null);
+} = useColumns(categoryRef);
 
 const loading = computed(() => categoryStore.$state.state.loading);
 const data = computed(() => categoryStore.$state.state.categoryData);
-
-provide("categoryRef", categoryRef);
 
 onMounted(() => {
   categoryStore.initCategory();
@@ -58,7 +55,7 @@ onMounted(() => {
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"
     />
-    <AddCategoryDialog ref="" />
+    <AddCategoryDialog ref="categoryRef" />
   </div>
 </template>
 

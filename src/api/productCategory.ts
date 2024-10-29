@@ -41,3 +41,7 @@ export type CategoryResult = {
 export const getCategory = () => {
   return http.request<CategoryResult>("get", "/product/type/getall");
 };
+
+export const handleProductCategoryUpdate = data => {
+  return http.request<CategoryResult>("post", "product/type/update", { data });
+};

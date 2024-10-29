@@ -9,7 +9,6 @@ export const useProductCategoryStore = defineStore("ProductCategory", () => {
   const defaultState: StateProps = {
     categoryData: [],
     loading: false,
-    display: false,
     edit: false,
     curCategory: null
   };
@@ -31,11 +30,8 @@ export const useProductCategoryStore = defineStore("ProductCategory", () => {
   const loadingTarget = (bool: boolean) => {
     state.loading = bool;
   };
-  const displayTarget = (bool: boolean) => {
-    state.loading = bool;
-  };
   const editTarget = (bool: boolean) => {
-    state.loading = bool;
+    state.edit = bool;
   };
 
   const curCategoryChange = (row: CategoryTypes) => {
@@ -48,7 +44,6 @@ export const useProductCategoryStore = defineStore("ProductCategory", () => {
     resetState,
     loadingTarget,
     curCategoryChange,
-    displayTarget,
     editTarget
   };
 });

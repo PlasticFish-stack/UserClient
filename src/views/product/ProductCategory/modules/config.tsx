@@ -1,4 +1,4 @@
-import { inject, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { useProductCategoryStore } from "./store";
 import type {
   AdaptiveConfig,
@@ -13,12 +13,9 @@ import type {
   CategoryTypes
 } from "@/api/productCategory";
 
-export function useColumns() {
+export function useColumns(categoryRef) {
   const categoryStore = useProductCategoryStore();
-  const display = ref(false);
   const edit = ref(false);
-
-  const categoryRef = inject("categoryRef");
 
   const loadingConfig = reactive<LoadingConfig>({
     text: "正在加载第一页...",
@@ -67,11 +64,6 @@ export function useColumns() {
     if (!script) return NaN;
 
     return eval(script) + "%";
-  };
-
-  const displayTarget = () => {
-    display.value = !display.value;
-    edit.value = false;
   };
 
   const onSizeChange = val => {
@@ -186,7 +178,7 @@ export function useColumns() {
             confirm-button-text="删除"
             cancel-button-text="返回"
             confirmButtonType="danger"
-            // onConfirm={() => handleDelete(index + 1, row)}
+            onConfirm={() => handleDelete(row)}
             v-slots={{
               reference: () => (
                 <el-button type="danger" size="small">
@@ -202,25 +194,28 @@ export function useColumns() {
   ]);
 
   function handleAdd(row: CategoryTypes) {
-    console.log("========", categoryRef);
-    /* categoryStore.curCategoryChange(row);
-    categoryStore.displayTarget(true);
-    categoryStore.editTarget(true); */
+    const { parentId } = row;
+    categoryStore.curCategoryChange(row);
+    categoryRef.value.open({
+      parentId
+    });
   }
 
   function handleEdit(row: CategoryTypes) {
-    handleAdd(row);
-    edit.value = true;
+    categoryStore.curCategoryChange(row);
+    categoryStore.editTarget(true);
+    categoryRef.value.open(row);
+  }
+  function handleDelete(row: CategoryTypes) {
+    console.log("=========", row);
   }
 
   return {
     columns,
-    display,
     edit,
     loadingConfig,
     pagination,
     adaptiveConfig,
-    displayTarget,
     onSizeChange,
     onCurrentChange
   };
