@@ -5,8 +5,12 @@ import { FormRules } from "element-plus";
 import { useProductCategoryStore } from "../modules/store";
 import { CategoryTypes } from "@/api/productCategory";
 import { useColumns } from "../modules/functionConfig";
+import { cloneDeep } from "@pureadmin/utils";
+import { useFieldColumns } from "../modules/fieldConfig";
+import { Plus, Delete } from "@element-plus/icons-vue";
 
-const { columns: functionColumns, dataList, onAdd, onDel } = useColumns();
+const { columns: functionColumns, getRandomFormulas } = useColumns();
+const { columns: fieldColumns, dataList, onAdd, onDel } = useFieldColumns();
 const categoryStore = useProductCategoryStore();
 
 const form = ref(null);
@@ -85,6 +89,10 @@ const columns = computed<PlusColumn[]>(() => {
     {
       label: "函数组",
       prop: "formulas"
+    },
+    {
+      label: "字段",
+      prop: "fields"
     }
   ];
 });
@@ -119,7 +127,27 @@ const handleConfirm = (values: CategoryTypes) => {
 };
 
 const open = (curRow: any) => {
-  state.form = curRow;
+  const rows = cloneDeep(curRow);
+  const randomFormulas = getRandomFormulas();
+
+  /* 
+     请求回来的formulas只有一个
+     拿formulas循环只有一次循环，所以我还需要再填充两行空数据（这个操作要加校验，代码有点恶心）
+
+     锁死三个（randomFormulas），用randomFormulas去循环，不足直接填充，这样很方便
+  */
+
+  const formulas = randomFormulas.map((item, idx) => {
+    const i = rows.formulas[idx];
+    return {
+      ...item,
+      ...i
+    };
+  });
+
+  rows.formulas = formulas;
+
+  state.form = rows;
   state.upCategorys = [
     {
       id: 0,
@@ -175,13 +203,48 @@ defineExpose({
     <template #dialog-header> {{ edit ? "编辑类别" : "新建类别" }} </template>
     <template #plus-field-formulas>
       <pure-table
-        row-key="id"
+        row-key="key"
         align-whole="center"
-        :data="dataList"
+        border
+        :data="state.form.formulas"
         :columns="functionColumns"
       />
+    </template>
+
+    <template #plus-field-fields>
+      <pure-table
+        border
+        row-key="id"
+        align-whole="center"
+        :data="[]"
+        :columns="fieldColumns"
+      >
+        <template #empty>
+          <el-empty description="暂无数据" :image-size="50" />
+        </template>
+        <template #append>
+          <el-button plain class="add-btn" :icon="Plus" @click="onAdd">
+            添加一行数据
+          </el-button>
+        </template>
+        <template #operation="{ row }">
+          <el-button
+            class="reset-margin"
+            link
+            type="primary"
+            :icon="Delete"
+            @click="onDel(row)"
+          />
+        </template>
+      </pure-table>
     </template>
   </PlusDialogForm>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.add-btn {
+  width: 90%;
+  margin: 4px 0;
+  margin-left: 5%;
+}
+</style>
