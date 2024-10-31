@@ -35,7 +35,9 @@ export type CategoryTypes = {
 
 export type CategoryResult = {
   success: boolean;
-  data: Array<CategoryTypes>;
+  data: {
+    data: Array<CategoryTypes>;
+  };
 };
 
 export const getCategory = () => {
@@ -44,4 +46,11 @@ export const getCategory = () => {
 
 export const handleProductCategoryUpdate = data => {
   return http.request<CategoryResult>("post", "product/type/update", { data });
+};
+
+export const handleProductCategoryAdd = data => {
+  return http.request<CategoryResult>("post", "product/type/add", { data });
+};
+export const handleProductCategoryDelete = data => {
+  return http.request<CategoryResult>("post", "product/type/delete", { data });
 };

@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { computed, h, reactive, ref, watch, watchEffect } from "vue";
+import { computed, h, reactive, ref, watchEffect } from "vue";
 import { PlusColumn, PlusDialogForm } from "plus-pro-components";
 import { FormRules } from "element-plus";
 import { useProductCategoryStore } from "../modules/store";
-import { CategoryTypes } from "@/api/productCategory";
+import {
+  CategoryFormulasTypes,
+  CategoryTypes,
+  handleProductCategoryAdd,
+  handleProductCategoryUpdate
+} from "@/api/productCategory";
 import { useColumns } from "../modules/functionConfig";
 import { cloneDeep } from "@pureadmin/utils";
 import { useFieldColumns } from "../modules/fieldConfig";
 import { Plus, Delete } from "@element-plus/icons-vue";
 
-const { columns: functionColumns, getRandomFormulas } = useColumns();
-const { columns: fieldColumns, dataList, onAdd, onDel } = useFieldColumns();
+const { columns: functionColumns } = useColumns();
+const { columns: fieldColumns } = useFieldColumns();
 const categoryStore = useProductCategoryStore();
 
 const form = ref(null);
@@ -46,7 +51,7 @@ const columns = computed<PlusColumn[]>(() => {
       valueType: "input"
     },
     {
-      label: "汇率",
+      label: "税率",
       prop: "tax",
       valueType: "input-number",
       fieldProps: {
@@ -106,54 +111,44 @@ const rules = reactive<FormRules>({
     }
   ],
   tax: [
-    { required: true, message: "请输入汇率" },
-    { type: "number", message: "汇率必须为数字" }
+    { required: true, message: "请输入税率" },
+    { type: "number", message: "税率必须为数字" }
   ],
   sort: [
     { required: true, message: "请输入排序" },
-    { type: "number", message: "汇率必须为数字" }
+    { type: "number", message: "税率必须为数字" }
   ]
 });
 
-const handleCancel = () => {
-  categoryStore.editTarget(false);
-  categoryStore.curCategoryChange(null);
-  state.visible = false;
-};
-
-const handleConfirm = (values: CategoryTypes) => {
-  console.log("values=============", values);
-  handleCancel();
+const addKey = list => {
+  return list.map(item => ({
+    ...item,
+    key: Math.floor(Math.random() * 1000)
+  }));
 };
 
 const open = (curRow: any) => {
   const rows = cloneDeep(curRow);
-  const randomFormulas = getRandomFormulas();
+  // const randomFormulas = getRandomFormulas();
 
-  /* 
-     请求回来的formulas只有一个
-     拿formulas循环只有一次循环，所以我还需要再填充两行空数据（这个操作要加校验，代码有点恶心）
-
-     锁死三个（randomFormulas），用randomFormulas去循环，不足直接填充，这样很方便
-  */
-
-  const formulas = randomFormulas.map((item, idx) => {
+  /* const formulas = randomFormulas.map((item, idx) => {
     const i = rows.formulas[idx];
     return {
       ...item,
       ...i
     };
-  });
+  }); */
 
-  rows.formulas = formulas;
+  rows.formulas = addKey(rows.formulas);
+  rows.fields = addKey(rows.fields);
 
   state.form = rows;
   state.upCategorys = [
     {
       id: 0,
-      name: "顶层"
-    },
-    ...categoryStore.$state.state.categoryData
+      name: "顶层",
+      children: categoryStore.$state.state.categoryData
+    }
   ];
 
   const recursionCategory = list => {
@@ -176,6 +171,69 @@ const open = (curRow: any) => {
   state.visible = true;
 };
 
+const addFormulasRow = () => {
+  state.form.formulas.push({
+    key: Math.floor(Math.random() * 1000),
+    name: "",
+    nickname: ""
+  });
+};
+
+const delFormulasRow = (row: CategoryFormulasTypes) => {
+  const idx = state.form.formulas.indexOf(row);
+  if (idx !== -1) state.form.formulas.splice(idx, 1);
+};
+
+const addFeildsRow = () => {
+  state.form.fields.push({
+    key: Math.floor(Math.random() * 1000),
+    name: "",
+    nickname: ""
+  });
+};
+
+const delFeildsRow = (row: CategoryFormulasTypes) => {
+  const idx = state.form.fields.indexOf(row);
+  if (idx !== -1) state.form.formulas.splice(idx, 1);
+};
+
+const handleCancel = () => {
+  categoryStore.editTarget(false);
+  categoryStore.curCategoryChange(null);
+  state.visible = false;
+};
+
+const removeAppointField = (fields: string[], list: any[]) => {
+  return list.map(l => {
+    return Object.keys(l).reduce((pre, key) => {
+      return fields.includes(key)
+        ? pre
+        : {
+            ...pre,
+            [key]: l[key]
+          };
+    }, {});
+  });
+};
+
+const handleConfirm = async (values: CategoryTypes) => {
+  const { children, ...args } = cloneDeep(values);
+  const data = args;
+
+  data.formulas = removeAppointField(
+    ["key", "previewValue", "preview"],
+    data.formulas
+  );
+  data.fields = removeAppointField(["key"], data.fields);
+
+  if (edit.value) {
+    await handleProductCategoryUpdate(data);
+  } else {
+    await handleProductCategoryAdd(data);
+  }
+  handleCancel();
+};
+
 defineExpose({
   open
 });
@@ -187,6 +245,7 @@ defineExpose({
     v-model:visible="state.visible"
     v-model="state.form"
     style="border-radius: 8px"
+    width="900"
     :form="{
       columns,
       rules,
@@ -208,22 +267,16 @@ defineExpose({
         border
         :data="state.form.formulas"
         :columns="functionColumns"
-      />
-    </template>
-
-    <template #plus-field-fields>
-      <pure-table
-        border
-        row-key="id"
-        align-whole="center"
-        :data="[]"
-        :columns="fieldColumns"
       >
-        <template #empty>
-          <el-empty description="暂无数据" :image-size="50" />
-        </template>
         <template #append>
-          <el-button plain class="add-btn" :icon="Plus" @click="onAdd">
+          <el-button
+            v-if="state.form.formulas.length < 3"
+            plain
+            class="add-btn"
+            link
+            :icon="Plus"
+            @click="addFormulasRow"
+          >
             添加一行数据
           </el-button>
         </template>
@@ -233,7 +286,39 @@ defineExpose({
             link
             type="primary"
             :icon="Delete"
-            @click="onDel(row)"
+            @click="delFormulasRow(row)"
+          />
+        </template>
+      </pure-table>
+    </template>
+
+    <template #plus-field-fields>
+      <pure-table
+        border
+        row-key="key"
+        align-whole="center"
+        :data="state.form.fields"
+        :columns="fieldColumns"
+        maxHeight="240"
+      >
+        <template #append>
+          <el-button
+            plain
+            class="add-btn"
+            link
+            :icon="Plus"
+            @click="addFeildsRow"
+          >
+            添加一行数据
+          </el-button>
+        </template>
+        <template #operation="{ row }">
+          <el-button
+            class="reset-margin"
+            link
+            type="primary"
+            :icon="Delete"
+            @click="delFeildsRow(row)"
           />
         </template>
       </pure-table>
@@ -243,8 +328,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .add-btn {
-  width: 90%;
+  width: 100%;
   margin: 4px 0;
-  margin-left: 5%;
 }
 </style>

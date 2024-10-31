@@ -16,11 +16,20 @@ const {
   pagination,
   adaptiveConfig,
   onSizeChange,
-  onCurrentChange
+  onCurrentChange,
+  handleAdd
 } = useColumns(categoryRef);
 
 const loading = computed(() => categoryStore.$state.state.loading);
 const data = computed(() => categoryStore.$state.state.categoryData);
+
+const handleAddCategory = () => {
+  categoryRef.value.open({
+    parentId: 0,
+    fields: [],
+    formulas: []
+  });
+};
 
 onMounted(() => {
   categoryStore.initCategory();
@@ -29,8 +38,7 @@ onMounted(() => {
 
 <template>
   <div class="main">
-    <!-- <div>产品类别</div> -->
-    <el-button class="mb-2">新建类别</el-button>
+    <el-button class="mb-2" @click="handleAddCategory">新建类别</el-button>
     <pure-table
       ref="tableRef"
       style="border-radius: 8px"

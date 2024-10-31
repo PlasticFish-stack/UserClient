@@ -7,10 +7,11 @@ import type {
 } from "@pureadmin/table";
 import { ElPopconfirm } from "element-plus";
 import { formatGolangDate } from "@/utils/time/date";
-import { delay } from "@pureadmin/utils";
-import type {
-  CategoryFormulasTypes,
-  CategoryTypes
+import { cloneDeep, delay } from "@pureadmin/utils";
+import {
+  handleProductCategoryDelete,
+  type CategoryFormulasTypes,
+  type CategoryTypes
 } from "@/api/productCategory";
 
 export function useColumns(categoryRef) {
@@ -96,16 +97,16 @@ export function useColumns(categoryRef) {
       align: "left"
     },
     {
-      label: "汇率",
+      label: "税率",
       headerAlign: "center",
       prop: "tax",
       align: "center",
       cellRenderer: ({ row }) => (
         <>
-          {row.formulas.length === 0 ? (
-            <el-tag type="success">汇率</el-tag>
+          {(row.formulas || []).length === 0 ? (
+            <el-tag type="success">税率</el-tag>
           ) : (
-            row.formulas.map(f => (
+            (row.formulas || []).map(f => (
               <el-tag
                 type="success"
                 key={f.id}
@@ -197,17 +198,30 @@ export function useColumns(categoryRef) {
     const { parentId } = row;
     categoryStore.curCategoryChange(row);
     categoryRef.value.open({
-      parentId
+      parentId,
+      fields: [],
+      formulas: []
     });
   }
 
   function handleEdit(row: CategoryTypes) {
-    categoryStore.curCategoryChange(row);
+    const checkRow = {
+      ...cloneDeep(row),
+      fields: row.fields || [],
+      formulas: row.formulas || []
+    };
+
+    categoryStore.curCategoryChange(checkRow);
     categoryStore.editTarget(true);
-    categoryRef.value.open(row);
+    categoryRef.value.open(checkRow);
   }
   function handleDelete(row: CategoryTypes) {
-    console.log("=========", row);
+    const { id, name } = row;
+
+    handleProductCategoryDelete({
+      id,
+      name
+    });
   }
 
   return {
@@ -217,6 +231,7 @@ export function useColumns(categoryRef) {
     pagination,
     adaptiveConfig,
     onSizeChange,
-    onCurrentChange
+    onCurrentChange,
+    handleAdd
   };
 }

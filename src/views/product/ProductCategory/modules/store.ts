@@ -22,8 +22,8 @@ export const useProductCategoryStore = defineStore("ProductCategory", () => {
   const initCategory = async () => {
     const res = await getCategory();
     if (res.success) {
-      state.categoryData = res.data;
-      console.log("=========", res.data);
+      state.categoryData = res.data.data;
+      console.log("=========", res.data.data);
     }
   };
 

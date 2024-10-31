@@ -30,8 +30,15 @@ export function useColumns() {
     },
     {
       label: "预览",
+      width: 70,
       prop: "preview",
       cellRenderer: ({ row }) => computedPreviewValue(row)
+    },
+    {
+      label: "操作",
+      fixed: "right",
+      width: 70,
+      slot: "operation"
     }
   ];
 

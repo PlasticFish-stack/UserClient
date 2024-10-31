@@ -1,69 +1,24 @@
-import { ref } from "vue";
-
 export function useFieldColumns() {
-  const dataList = ref([]);
-
   const columns: TableColumnList = [
     {
-      label: "姓名",
+      label: "名称",
       prop: "name",
       cellRenderer: ({ row }) => <el-input v-model={row.name} />
     },
     {
-      label: "性别",
-      prop: "sex",
-      cellRenderer: ({ row }) => (
-        <el-switch
-          v-model={row.sex}
-          inline-prompt
-          active-value={0}
-          inactive-value={1}
-          active-text="男"
-          inactive-text="女"
-        />
-      )
-    },
-    {
-      label: "日期",
-      prop: "date",
-      cellRenderer: ({ row }) => (
-        <el-date-picker
-          v-model={row.date}
-          type="date"
-          format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择日期"
-        />
-      ),
-      minWidth: 110
+      label: "别称",
+      prop: "nickname",
+      cellRenderer: ({ row }) => <el-input v-model={row.nickname} />
     },
     {
       label: "操作",
       fixed: "right",
-      width: 90,
+      width: 70,
       slot: "operation"
     }
   ];
 
-  function onAdd() {
-    dataList.value.push({
-      id: dataList.value.length + 1,
-      name: "",
-      sex: 0,
-      hobby: "",
-      date: ""
-    });
-  }
-
-  function onDel(row) {
-    const index = dataList.value.indexOf(row);
-    if (index !== -1) dataList.value.splice(index, 1);
-  }
-
   return {
-    columns,
-    dataList,
-    onAdd,
-    onDel
+    columns
   };
 }
