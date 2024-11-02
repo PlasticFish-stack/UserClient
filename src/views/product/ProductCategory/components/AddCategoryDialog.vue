@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed, h, reactive, ref, watchEffect } from "vue";
+import { computed, h, reactive, ref } from "vue";
 import { PlusColumn, PlusDialogForm } from "plus-pro-components";
 import { FormRules } from "element-plus";
 import { useProductCategoryStore } from "../modules/store";
 import {
   CategoryFormulasTypes,
-  CategoryTypes,
   handleProductCategoryAdd,
   handleProductCategoryUpdate
 } from "@/api/productCategory";
@@ -13,6 +12,7 @@ import { useColumns } from "../modules/functionConfig";
 import { cloneDeep } from "@pureadmin/utils";
 import { useFieldColumns } from "../modules/fieldConfig";
 import { Plus, Delete } from "@element-plus/icons-vue";
+import { successMes } from "@/utils/globalReqMes";
 
 const { columns: functionColumns } = useColumns();
 const { columns: fieldColumns } = useFieldColumns();
@@ -23,20 +23,11 @@ const state = reactive({
   visible: false,
   form: null,
   upCategorys: [],
-  categoryMapping: {}
+  categoryMapping: {},
+  subLoading: false
 });
 
 const edit = computed(() => categoryStore.$state.state.edit);
-const curCategory = computed(() => categoryStore.$state.state.curCategory);
-
-watchEffect(() => {
-  console.log("==========", {
-    /* curCategory,
-    state,
-    edit */
-    form: state.form
-  });
-});
 
 const columns = computed<PlusColumn[]>(() => {
   return [
@@ -216,22 +207,26 @@ const removeAppointField = (fields: string[], list: any[]) => {
   });
 };
 
-const handleConfirm = async (values: CategoryTypes) => {
+const handleConfirm = async (values: CategoryFormulasTypes) => {
   const { children, ...args } = cloneDeep(values);
   const data = args;
-
+  state.subLoading = true;
   data.formulas = removeAppointField(
     ["key", "previewValue", "preview"],
     data.formulas
-  );
+  ).filter(f => (f as CategoryFormulasTypes).formula);
   data.fields = removeAppointField(["key"], data.fields);
 
   if (edit.value) {
-    await handleProductCategoryUpdate(data);
+    const res = await handleProductCategoryUpdate(data);
+    successMes(res.data);
   } else {
-    await handleProductCategoryAdd(data);
+    const res = await handleProductCategoryAdd(data);
+    successMes(res.data);
   }
+  state.subLoading = false;
   handleCancel();
+  categoryStore.initCategory();
 };
 
 defineExpose({
@@ -244,6 +239,7 @@ defineExpose({
     ref="form"
     v-model:visible="state.visible"
     v-model="state.form"
+    v-loading="state.subLoading"
     style="border-radius: 8px"
     width="900"
     :form="{

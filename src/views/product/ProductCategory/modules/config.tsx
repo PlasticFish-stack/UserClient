@@ -114,7 +114,7 @@ export function useColumns(categoryRef) {
                   marginLeft: "4px"
                 }}
               >
-                {`${f.nickname}：${targetScript(row, f)}`}
+                {`${f.nickname || f.name}：${targetScript(row, f)}`}
               </el-tag>
             ))
           )}
@@ -215,13 +215,14 @@ export function useColumns(categoryRef) {
     categoryStore.editTarget(true);
     categoryRef.value.open(checkRow);
   }
-  function handleDelete(row: CategoryTypes) {
+  async function handleDelete(row: CategoryTypes) {
     const { id, name } = row;
 
-    handleProductCategoryDelete({
+    await handleProductCategoryDelete({
       id,
       name
     });
+    categoryStore.initCategory();
   }
 
   return {
@@ -231,7 +232,6 @@ export function useColumns(categoryRef) {
     pagination,
     adaptiveConfig,
     onSizeChange,
-    onCurrentChange,
-    handleAdd
+    onCurrentChange
   };
 }

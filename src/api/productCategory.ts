@@ -39,18 +39,27 @@ export type CategoryResult = {
     data: Array<CategoryTypes>;
   };
 };
+export type CategoryReqResult = {
+  success: boolean;
+  data: string;
+};
 
 export const getCategory = () => {
   return http.request<CategoryResult>("get", "/product/type/getall");
 };
 
 export const handleProductCategoryUpdate = data => {
-  return http.request<CategoryResult>("post", "product/type/update", { data });
+  return http.request<CategoryReqResult>("post", "product/type/update", {
+    data
+  });
 };
 
 export const handleProductCategoryAdd = data => {
-  return http.request<CategoryResult>("post", "product/type/add", { data });
+  return http.request<CategoryReqResult>("post", "product/type/add", { data });
 };
+
 export const handleProductCategoryDelete = data => {
-  return http.request<CategoryResult>("post", "product/type/delete", { data });
+  return http.request<CategoryReqResult>("post", "product/type/delete", {
+    data
+  });
 };

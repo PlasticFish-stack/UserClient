@@ -16,8 +16,7 @@ const {
   pagination,
   adaptiveConfig,
   onSizeChange,
-  onCurrentChange,
-  handleAdd
+  onCurrentChange
 } = useColumns(categoryRef);
 
 const loading = computed(() => categoryStore.$state.state.loading);

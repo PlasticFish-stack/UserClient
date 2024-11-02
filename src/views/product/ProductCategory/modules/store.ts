@@ -23,7 +23,6 @@ export const useProductCategoryStore = defineStore("ProductCategory", () => {
     const res = await getCategory();
     if (res.success) {
       state.categoryData = res.data.data;
-      console.log("=========", res.data.data);
     }
   };
 
