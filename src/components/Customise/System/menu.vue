@@ -1,78 +1,101 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from "vue";
+import { computed, h, onMounted, reactive, ref, watch } from "vue";
 import "plus-pro-components/es/components/dialog-form/style/css";
-import {
-  type PlusColumn,
-  type FieldValues,
-  PlusDialogForm,
-  Mutable
-} from "plus-pro-components";
+import { type PlusColumn, PlusDialogForm, Mutable } from "plus-pro-components";
 import { useMenuTableStore } from "@/store/modules/customise/menu";
 import { ColProps, FormRules, RowProps } from "element-plus";
 import { IconSelect } from "@/components/ReIcon";
 
 const menuTableStore = useMenuTableStore();
 const visible = ref(false);
+const state = reactive({
+  menuMapping: {},
+  upMenus: []
+});
+
 const form = ref<any>(null);
-const columns: PlusColumn[] = [
-  {
-    label: "菜单名称",
-    width: 120,
-    prop: "name",
-    valueType: "copy"
-  },
-  {
-    label: "菜单标识",
-    width: 120,
-    prop: "identifier",
-    valueType: "copy"
-  },
-  {
-    label: "菜单简介",
-    width: 120,
-    prop: "description",
-    valueType: "copy"
-  },
-  {
-    label: "菜单路径",
-    width: 120,
-    prop: "path",
-    valueType: "copy",
-    hideInForm: menuTableStore.setting.isParent
-  },
-  {
-    label: "菜单图标",
-    width: 120,
-    prop: "icon",
-    valueType: "copy"
-  },
-  {
-    label: "菜单模板",
-    width: 120,
-    prop: "component",
-    valueType: "copy"
-  },
-  {
-    label: "菜单排序",
-    width: 120,
-    prop: "sort",
-    valueType: "copy",
-    hideInForm: !menuTableStore.setting.isParent
-  },
-  {
-    label: "父菜单id",
-    width: 120,
-    prop: "parentId",
-    valueType: "copy",
-    hideInForm: menuTableStore.setting.isParent
-  },
-  {
-    label: "是否生效",
-    width: 100,
-    prop: "status",
-    valueType: "switch"
-  }
-];
+
+const columns = computed<PlusColumn[]>(() => {
+  return [
+    {
+      label: "菜单名称",
+      width: 120,
+      prop: "name",
+      valueType: "copy"
+    },
+    {
+      label: "菜单标识",
+      width: 120,
+      prop: "identifier",
+      valueType: "copy"
+    },
+    {
+      label: "菜单简介",
+      width: 120,
+      prop: "description",
+      valueType: "copy"
+    },
+    {
+      label: "菜单路径",
+      width: 120,
+      prop: "path",
+      valueType: "copy",
+      hideInForm: menuTableStore.setting.isParent
+    },
+    {
+      label: "菜单图标",
+      width: 120,
+      prop: "icon",
+      valueType: "copy"
+    },
+    {
+      label: "菜单模板",
+      width: 120,
+      prop: "component",
+      valueType: "copy"
+    },
+    {
+      label: "菜单排序",
+      width: 120,
+      prop: "sort",
+      valueType: "copy",
+      hideInForm: !menuTableStore.setting.isParent
+    },
+    {
+      label: "父菜单id",
+      width: 120,
+      prop: "parentId",
+      hideInForm: menuTableStore.setting.isParent,
+      valueType: "tree-select",
+      fieldProps: {
+        data: state.upMenus,
+        showCheckbox: true,
+        defaultExpandAll: true,
+        clearable: false,
+        multiple: false,
+        checkStrictly: true,
+        valueKey: "id",
+        style: {
+          width: "100%"
+        }
+      },
+      fieldSlots: {
+        default: ({ data }) => {
+          return h("div", null, data.name);
+        },
+        label: row => {
+          return h("div", null, state.menuMapping[row.value]);
+        }
+      }
+    },
+    {
+      label: "是否生效",
+      width: 100,
+      prop: "status",
+      valueType: "switch"
+    }
+  ];
+});
 
 const rules = reactive<FormRules>({
   name: [
@@ -151,6 +174,33 @@ onMounted(() => {
     sort: menuTableStore.rowData.sort,
     parentId: menuTableStore.rowData.parentId
   };
+
+  state.upMenus = [
+    {
+      id: 0,
+      name: "顶层",
+      children: menuTableStore.$state.data
+    }
+  ];
+
+  // 递归读取名称
+  const recursionCategory = list => {
+    return list.reduce((pre, cur) => {
+      pre = {
+        ...pre,
+        [cur.id]: cur.name
+      };
+      if (cur.children) {
+        return {
+          ...pre,
+          ...recursionCategory(cur.children)
+        };
+      }
+      return pre;
+    }, {});
+  };
+  state.menuMapping = recursionCategory(state.upMenus);
+
   watch(
     () => visible.value,
     newVal => {

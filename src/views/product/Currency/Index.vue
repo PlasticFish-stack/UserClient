@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import { computed, defineComponent, onMounted, reactive, ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref
+} from "vue";
 import { useCurrencyStore } from "./CoreModules/store";
-import { Edit } from "@element-plus/icons-vue";
+import { Edit, Star, StarFilled } from "@element-plus/icons-vue";
 import CurrencyDialog from "./components/CurrencyDialog.vue";
 import { CurrencyTypes, synchronousCurrency } from "@/api/currency";
 import { cloneDeep } from "@pureadmin/utils";
@@ -15,11 +22,15 @@ defineComponent({
 interface stateProps {
   synchronousLoading: boolean;
   confirmLoading: boolean;
+  stars: {
+    [key: string]: boolean;
+  };
 }
 
 const defaultState: stateProps = {
   synchronousLoading: false,
-  confirmLoading: false
+  confirmLoading: false,
+  stars: {}
 };
 
 const currencyStore = useCurrencyStore();
@@ -27,11 +38,28 @@ const currencyStore = useCurrencyStore();
 const currencyDiaRef = ref(null);
 const state = reactive(cloneDeep(defaultState));
 
-const currencyData = computed(() => currencyStore.$state.store.currencyData);
+const currencyData = computed(() => {
+  const data = currencyStore.$state.store.currencyData;
+  const checkStars = data
+    .flatMap(item => (state.stars[item.id] ? [item] : []))
+    .sort((a, b) => a.sort - b.sort);
+
+  const endData = checkStars.concat(data.filter(c => !state.stars[c.id]));
+
+  return endData;
+});
 
 const editCurrency = (row: CurrencyTypes) => {
   currencyStore.$state.store.rowData = row;
   currencyDiaRef.value.open();
+};
+
+const handleStar = (row: CurrencyTypes) => {
+  const stars = state.stars;
+
+  const status = !!stars[row.id];
+  state.stars[row.id] = !status;
+  localStorage.setItem("stars", JSON.stringify(state.stars));
 };
 
 /* 同步货币信息 */
@@ -43,6 +71,14 @@ const handleSynchronousCurrency = async () => {
 
 onMounted(() => {
   currencyStore.initCurrency();
+  const storageStars = localStorage.getItem("stars");
+  if (storageStars) {
+    state.stars = JSON.parse(storageStars);
+  }
+});
+
+onUnmounted(() => {
+  localStorage.setItem("stars", JSON.stringify(state.stars));
 });
 </script>
 
@@ -85,6 +121,18 @@ onMounted(() => {
               @click="() => editCurrency(item)"
             />
           </div>
+          <div class="star">
+            <el-button circle type="info" @click="() => handleStar(item)">
+              <template #icon>
+                <el-icon v-if="!state.stars[item.id]" :size="20"
+                  ><Star
+                /></el-icon>
+                <el-icon v-else :size="20"
+                  ><StarFilled color="yellow"
+                /></el-icon>
+              </template>
+            </el-button>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -122,7 +170,7 @@ onMounted(() => {
 
     .svg-container {
       width: 100px;
-      height: 60px;
+      height: 70px;
     }
 
     .name,
@@ -149,6 +197,12 @@ onMounted(() => {
       position: absolute;
       top: -10px;
       right: -10px;
+    }
+    .star {
+      /* display: none; */
+      position: absolute;
+      top: 5px;
+      left: 5px;
     }
   }
 }

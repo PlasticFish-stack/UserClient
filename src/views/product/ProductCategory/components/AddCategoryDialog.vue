@@ -142,6 +142,7 @@ const open = (curRow: any) => {
     }
   ];
 
+  // 递归读取名称
   const recursionCategory = list => {
     return list.reduce((pre, cur) => {
       pre = {
