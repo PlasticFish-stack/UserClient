@@ -9,6 +9,7 @@ import { reactive } from "vue";
 import { ElPopconfirm } from "element-plus";
 import type { BrandTypes } from "@/api/brand";
 import useInformationStore from "./store";
+import { InformationTypes } from "@/api/information";
 
 export function useColumns(informationFormRef) {
   const informationStore = useInformationStore();
@@ -54,9 +55,6 @@ export function useColumns(informationFormRef) {
       prop: key,
       headerRenderer: () => (
         <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0">
-            {/* <iconify-icon-online icon="ep:timer" /> */}
-          </div>
           <div>
             <span>{title}</span>
           </div>
@@ -70,13 +68,13 @@ export function useColumns(informationFormRef) {
     };
   };
 
-  const handleEdit = (row: BrandTypes) => {
-    /* informationStore.initCurBrand(row);
+  const handleEdit = (row: InformationTypes) => {
+    informationStore.initCurInformation(row);
     informationStore.typeChange("Edit");
-    brandFormRef.value?.open(); */
+    informationFormRef.value?.open();
   };
 
-  const handleDelete = (row: BrandTypes) => {
+  const handleDelete = (row: InformationTypes) => {
     const { id } = row;
     /*  informationStore.deleteBrand([
       {
@@ -85,7 +83,15 @@ export function useColumns(informationFormRef) {
     ]); */
   };
 
-  const columns: TableColumnList = [
+  const indexMethod = (index: number) => {
+    return index + 1;
+  };
+
+  const columns = reactive<TableColumnList>([
+    {
+      type: "expand",
+      slot: "expand"
+    },
     {
       label: "货号",
       prop: "itemNumber",
@@ -184,7 +190,30 @@ export function useColumns(informationFormRef) {
         </>
       )
     }
-  ];
+  ]);
+
+  const expandColumns = reactive<TableColumnList>([
+    {
+      type: "index",
+      index: indexMethod
+    },
+    {
+      label: "表格名称",
+      prop: "excelLogId"
+    },
+    {
+      label: "成本价",
+      prop: "cost"
+    },
+    {
+      label: "货币名称",
+      prop: "currencyName"
+    },
+    {
+      label: "货币税率",
+      prop: "currencyCost"
+    }
+  ]);
 
   function onSizeChange(val) {
     console.log("onSizeChange=====", val);
@@ -200,6 +229,7 @@ export function useColumns(informationFormRef) {
   }
   return {
     columns,
+    expandColumns,
     pagination,
     loadingConfig,
     adaptiveConfig,

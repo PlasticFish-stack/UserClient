@@ -9,6 +9,7 @@ const informationFormRef = ref(null);
 
 const {
   columns,
+  expandColumns,
   pagination,
   loadingConfig,
   adaptiveConfig,
@@ -25,6 +26,18 @@ const addInformationForm = () => {
   console.log("============add");
 };
 
+const handleRowStyles = (data: { row: any; rowIndex: number }) => {
+  console.log("========", data);
+  /*  if (data.rowIndex % 2) {
+    return {
+        background:'#ccc'
+      }
+  } */
+  return {
+    background: "#ccc"
+  };
+};
+
 onMounted(() => {
   informationStore.initInformation();
 });
@@ -37,6 +50,7 @@ onMounted(() => {
       ref="tableRef"
       style="border-radius: 8px"
       adaptive
+      stripe
       :adaptiveConfig="adaptiveConfig"
       row-key="id"
       alignWhole="center"
@@ -49,12 +63,28 @@ onMounted(() => {
           pagination.currentPage * pagination.pageSize
         )
       "
+      :row-style="handleRowStyles"
       :columns="columns"
       :pagination="pagination"
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"
-    />
+    >
+      <template #expand="{ row }">
+        <div>
+          <pure-table
+            border
+            stripe
+            :data="row.costs"
+            :columns="expandColumns"
+          />
+        </div>
+      </template>
+    </pure-table>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.el-table__expanded-cell) {
+  padding: 0;
+}
+</style>

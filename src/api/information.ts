@@ -1,5 +1,18 @@
 import { http } from "@/utils/http";
 
+export type CostsTypes = {
+  /* 产品ID */
+  productId: number;
+  /* Excel ID */
+  excelLogId: number;
+  /* 成本价 */
+  cost: number;
+  /* 货币名称 */
+  currencyName: string;
+  /* 货币税率 */
+  currencyCost: number;
+};
+
 export type InformationTypes = {
   id: number;
   createTime: Date;
@@ -29,7 +42,7 @@ export type InformationTypes = {
   /* 类型 */
   typeName: string;
   /* 成本价表 */
-  costs: any[];
+  costs: CostsTypes[];
   /* 产品字段 */
   options: {
     [key: string]: string;
@@ -55,11 +68,8 @@ export type InformationReqResult = {
   data: string;
 };
 
-export const getInformation = () => {
+export const getInformation = params => {
   return http.request<InformationResult>("get", "/product/product/getlimits", {
-    data: {
-      pageSize: 15,
-      pageNum: 1
-    }
+    params
   });
 };
