@@ -3,15 +3,14 @@ import type {
   LoadingConfig,
   PaginationProps
 } from "@pureadmin/table";
-import { delay } from "@pureadmin/utils";
+// import { delay } from "@pureadmin/utils";
 import { formatGolangDate } from "@/utils/time/date";
 import { reactive } from "vue";
 import { ElPopconfirm } from "element-plus";
-import type { BrandTypes } from "@/api/brand";
 import useInformationStore from "./store";
-import { InformationTypes } from "@/api/information";
+import type { InformationTypes } from "@/api/information";
 
-export function useColumns(informationFormRef) {
+export function useColumns(informationFormRef, detailDrawerRef) {
   const informationStore = useInformationStore();
 
   const loadingConfig = reactive<LoadingConfig>({
@@ -71,11 +70,12 @@ export function useColumns(informationFormRef) {
   const handleEdit = (row: InformationTypes) => {
     informationStore.initCurInformation(row);
     informationStore.typeChange("Edit");
-    informationFormRef.value?.open();
+    detailDrawerRef.value?.open();
   };
 
   const handleDelete = (row: InformationTypes) => {
-    const { id } = row;
+    console.log("===========", row);
+    // const { id } = row;
     /*  informationStore.deleteBrand([
       {
         id
@@ -88,10 +88,10 @@ export function useColumns(informationFormRef) {
   };
 
   const columns = reactive<TableColumnList>([
-    {
+    /* {
       type: "expand",
       slot: "expand"
-    },
+    }, */
     {
       label: "货号",
       prop: "itemNumber",
@@ -160,6 +160,8 @@ export function useColumns(informationFormRef) {
     {
       label: "操作选项",
       prop: "",
+      width: "150px",
+      fixed: "right",
       cellRenderer: ({ row }) => (
         <>
           <el-button

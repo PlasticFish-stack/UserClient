@@ -56,14 +56,14 @@ const rules = reactive<FormRules>({
 const open = () => {
   state.visible = true;
 
-  const row = brandStore.$state.state.curBrand;
-  state.form = row;
+  /* const row = brandStore.$state.state.curBrand;
+  state.form = row; */
 };
 
 const handleCancel = () => {
-  resetReactiveState(state, defaultState);
+  /* resetReactiveState(state, defaultState);
   brandStore.initCurBrand(null);
-  state.visible = false;
+  state.visible = false; */
 };
 
 const handleConfirm = async value => {
@@ -74,7 +74,7 @@ const handleConfirm = async value => {
     const res = await handleBrandUpdate(value);
     successMes(res.data);
   }
-  brandStore.initBrand();
+  // brandStore.initBrand();
   handleCancel();
 };
 

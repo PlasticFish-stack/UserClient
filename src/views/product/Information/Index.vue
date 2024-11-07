@@ -2,10 +2,12 @@
 import { computed, onMounted, ref } from "vue";
 import useInformationStore from "./modules/store";
 import { useColumns } from "./modules/config";
+import DetailDrawer from "./components/DetailDrawer.vue";
 
 const informationStore = useInformationStore();
 
 const informationFormRef = ref(null);
+const detailDrawerRef = ref(null);
 
 const {
   columns,
@@ -15,7 +17,7 @@ const {
   adaptiveConfig,
   onSizeChange,
   onCurrentChange
-} = useColumns(informationFormRef);
+} = useColumns(informationFormRef, detailDrawerRef);
 
 const informationData = computed(
   () => informationStore.$state.state.informationData
@@ -26,18 +28,6 @@ const addInformationForm = () => {
   console.log("============add");
 };
 
-const handleRowStyles = (data: { row: any; rowIndex: number }) => {
-  console.log("========", data);
-  /*  if (data.rowIndex % 2) {
-    return {
-        background:'#ccc'
-      }
-  } */
-  return {
-    background: "#ccc"
-  };
-};
-
 onMounted(() => {
   informationStore.initInformation();
 });
@@ -45,12 +35,11 @@ onMounted(() => {
 
 <template>
   <div class="main">
-    <el-button class="mb-2" @click="addInformationForm">新建产品</el-button>
+    <el-button class="mb-2" @click="addInformationForm">新增产品信息</el-button>
     <pure-table
       ref="tableRef"
       style="border-radius: 8px"
       adaptive
-      stripe
       :adaptiveConfig="adaptiveConfig"
       row-key="id"
       alignWhole="center"
@@ -63,28 +52,19 @@ onMounted(() => {
           pagination.currentPage * pagination.pageSize
         )
       "
-      :row-style="handleRowStyles"
       :columns="columns"
       :pagination="pagination"
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"
     >
-      <template #expand="{ row }">
+      <!--   <template #expand="{ row }">
         <div>
-          <pure-table
-            border
-            stripe
-            :data="row.costs"
-            :columns="expandColumns"
-          />
+          <pure-table stripe :data="row.costs" :columns="expandColumns" />
         </div>
-      </template>
+      </template> -->
     </pure-table>
+    <DetailDrawer ref="detailDrawerRef" />
   </div>
 </template>
 
-<style lang="scss" scoped>
-:deep(.el-table__expanded-cell) {
-  padding: 0;
-}
-</style>
+<style lang="scss" scoped></style>

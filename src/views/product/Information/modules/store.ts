@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 import type { StateProps } from "./types";
-import { getInformation, InformationTypes } from "@/api/information";
+import { getInformation, type InformationTypes } from "@/api/information";
 
 const useInformationStore = defineStore("Information", () => {
   const state = reactive<StateProps>({
