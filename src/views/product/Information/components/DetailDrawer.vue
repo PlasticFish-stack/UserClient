@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watchEffect } from "vue";
+import { computed, h, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import useInformationStore from "../modules/store";
 import type { InformationTypes } from "@/api/information";
 import { PlusColumn, PlusDrawerForm } from "plus-pro-components";
 import { useOptionsColumns } from "../modules/optionsConfig";
 import { FormRules } from "element-plus";
+import { getBrand } from "@/api/brand";
+import { getCategory } from "@/api/productCategory";
 
 const informationStore = useInformationStore();
 const { columns: optionsColumns } = useOptionsColumns();
@@ -14,7 +16,9 @@ const state = reactive({
   optionsData: [],
   loading: false,
   categoryData: [],
-  brandData: []
+  brandData: [],
+  categoryMapping: {},
+  brandMapping: {}
 });
 
 const form = ref<InformationTypes>(null);
@@ -59,18 +63,33 @@ const columns = reactive<PlusColumn[]>([
   {
     label: "产品类别",
     prop: "typeId",
-    valueType: "input",
+    valueType: "tree-select",
     colProps: {
       span: 12
+    },
+    fieldProps: {
+      data: computed(() => state.categoryData),
+      showCheckbox: true,
+      defaultExpandAll: true,
+      clearable: false,
+      multiple: false,
+      checkStrictly: true,
+      style: {
+        width: "100%"
+      }
     }
   },
   {
     label: "品牌",
     prop: "brandId",
-    valueType: "input",
+    valueType: "select",
     colProps: {
       span: 12
-    }
+    },
+    fieldProps: {
+      clearable: true
+    },
+    options: computed(() => state.brandData)
   },
   {
     label: "sku",
@@ -149,6 +168,19 @@ const initOptions = options => {
   state.optionsData = list;
 };
 
+const handleTypeChange = type => {
+  const fields =
+    state.categoryMapping[type] && state.categoryMapping[type].fields;
+  if (!fields) return;
+
+  const comOptions = state.optionsData.reduce((pre, cur) => {
+    return {
+      ...pre,
+      [cur.name]: cur.value
+    };
+  }, {});
+};
+
 const open = () => {
   state.visable = true;
   const curInformation = informationStore.$state.state.curInformation;
@@ -165,15 +197,67 @@ const handleCancel = () => {
   state.visable = false;
 };
 
-watchEffect(() => {
-  // console.log("===========", state.visable);
-});
-
 const handleConfirm = values => {
   console.log("=============", values);
 };
 
-onMounted(() => {});
+/**
+ * 监听开始
+ */
+watch(
+  () => form.value?.typeId,
+  type => {
+    console.log("type===========", type);
+  }
+);
+
+/**
+ * 初始化处理 产品类别、品牌基础数据
+ */
+// 递归读取名称
+const recursionCategory = list => {
+  return list.reduce((pre, cur) => {
+    pre = {
+      ...pre,
+      [cur.id]: cur
+    };
+    if (cur.children) {
+      return {
+        ...pre,
+        ...recursionCategory(cur.children)
+      };
+    }
+    return pre;
+  }, {});
+};
+const recursionCategoryAddOptions = list => {
+  return list.reduce((pre, cur) => {
+    pre = [
+      ...pre,
+      {
+        ...cur,
+        label: cur.name,
+        value: cur.id,
+        children: recursionCategoryAddOptions(cur.children || [])
+      }
+    ];
+    return pre;
+  }, []);
+};
+
+onMounted(async () => {
+  const categoryRes = await getCategory();
+  const brandRes = await getBrand();
+
+  state.categoryData = recursionCategoryAddOptions(categoryRes.data.data || []);
+  state.brandData = brandRes.data.map(item => ({
+    ...item,
+    label: item.name,
+    value: item.id
+  }));
+  state.categoryMapping = recursionCategory(state.categoryData);
+  state.brandMapping = recursionCategory(state.brandData);
+});
 
 defineExpose({
   open
