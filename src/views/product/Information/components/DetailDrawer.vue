@@ -7,6 +7,7 @@ import { useOptionsColumns } from "../modules/optionsConfig";
 import { FormRules } from "element-plus";
 import { getBrand } from "@/api/brand";
 import { getCategory } from "@/api/productCategory";
+import { cloneDeep } from "@pureadmin/utils";
 
 const informationStore = useInformationStore();
 const { columns: optionsColumns } = useOptionsColumns();
@@ -37,13 +38,13 @@ const rules = reactive<FormRules>({
       message: "请输入货号"
     }
   ],
-  /* typeId: [
+  typeId: [
     {
       required: true,
       trigger: "blur",
       message: "请选择产品类别"
     }
-  ], */
+  ],
   brandId: [
     {
       required: true,
@@ -76,6 +77,9 @@ const columns = reactive<PlusColumn[]>([
       checkStrictly: true,
       style: {
         width: "100%"
+      },
+      onChange: () => {
+        handleTypeChange(form.value.typeId);
       }
     }
   },
@@ -158,43 +162,66 @@ const columns = reactive<PlusColumn[]>([
   }
 ]);
 
-const initOptions = options => {
-  const list = Object.keys(options).map(key => {
+const handleIntegrationOptions = options => {
+  return Object.keys(options).map(key => {
     return {
       name: key,
       value: options[key]
     };
   });
-  state.optionsData = list;
 };
 
-const handleTypeChange = type => {
+const initOptionsData = options => {
+  state.optionsData = options;
+};
+
+const initOptions = options => {
+  const data = handleIntegrationOptions(options);
+  initOptionsData(data);
+};
+
+const handleTypeChange = (type, initialOptionsData?) => {
+  const optionsData = initialOptionsData || state.optionsData;
   const fields =
     state.categoryMapping[type] && state.categoryMapping[type].fields;
   if (!fields) return;
 
-  const comOptions = state.optionsData.reduce((pre, cur) => {
+  const comOptionsMapping = optionsData.reduce((pre, cur) => {
     return {
       ...pre,
       [cur.name]: cur.value
     };
   }, {});
+
+  const integrationOptions = fields.reduce((pre, cur) => {
+    return {
+      ...pre,
+      [cur.name]: comOptionsMapping[cur.name] || ""
+    };
+  }, {});
+  initOptions(integrationOptions);
 };
 
 const open = () => {
   state.visable = true;
-  const curInformation = informationStore.$state.state.curInformation;
+  const curInformation = cloneDeep(
+    informationStore.$state.state.curInformation
+  );
 
   form.value = curInformation;
 
   const type = informationStore.$state.state.type === "Add";
   if (!type) {
-    initOptions(curInformation.options);
+    handleTypeChange(
+      curInformation.typeId,
+      handleIntegrationOptions(curInformation.options)
+    );
   }
 };
 
 const handleCancel = () => {
   state.visable = false;
+  informationStore.initCurInformation(null);
 };
 
 const handleConfirm = values => {
@@ -204,12 +231,12 @@ const handleConfirm = values => {
 /**
  * 监听开始
  */
-watch(
+/* watch(
   () => form.value?.typeId,
   type => {
-    console.log("type===========", type);
+    handleTypeChange(type);
   }
-);
+); */
 
 /**
  * 初始化处理 产品类别、品牌基础数据
@@ -273,7 +300,8 @@ defineExpose({
     :form="{
       columns,
       rules,
-      rowProps: { gutter: 20 }
+      rowProps: { gutter: 8 },
+      labelWidth: '100px'
     }"
     cancel-text="取消"
     confirm-text="确定"

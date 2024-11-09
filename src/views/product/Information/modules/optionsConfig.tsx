@@ -7,7 +7,7 @@ export function useOptionsColumns() {
     {
       label: "值",
       prop: "value",
-      cellRenderer: ({ row }) => <el-input v-model={row.nickname} />
+      cellRenderer: ({ row }) => <el-input v-model={row.value} />
     }
   ];
 
