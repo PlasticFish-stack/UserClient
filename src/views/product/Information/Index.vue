@@ -25,7 +25,23 @@ const informationData = computed(
 const loading = computed(() => informationStore.$state.state.loading);
 
 const addInformationForm = () => {
-  console.log("============add");
+  informationStore.typeChange("Add");
+  informationStore.initCurInformation({
+    itemNumber: "",
+    brandId: undefined,
+    sku: "",
+    spu: "",
+    quantity: undefined,
+    specifications: "",
+    barcode: "",
+    customscode: "",
+    description: "",
+    color: "",
+    typeId: null,
+    options: {}
+  });
+
+  detailDrawerRef.value.open();
 };
 
 onMounted(() => {

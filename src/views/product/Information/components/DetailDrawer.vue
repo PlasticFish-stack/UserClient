@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { computed, h, onMounted, reactive, ref, watch, watchEffect } from "vue";
+import { computed, h, onMounted, reactive, ref } from "vue";
 import useInformationStore from "../modules/store";
-import type { InformationTypes } from "@/api/information";
+import {
+  handleInformationAdd,
+  handleInformationUpdate,
+  type InformationTypes
+} from "@/api/information";
 import { PlusColumn, PlusDrawerForm } from "plus-pro-components";
 import { useOptionsColumns } from "../modules/optionsConfig";
 import { FormRules } from "element-plus";
 import { getBrand } from "@/api/brand";
 import { getCategory } from "@/api/productCategory";
 import { cloneDeep } from "@pureadmin/utils";
+import { successMes } from "@/utils/globalReqMes";
+import { getKeyParams } from "@/utils/globalUtils";
 
 const informationStore = useInformationStore();
 const { columns: optionsColumns } = useOptionsColumns();
@@ -221,22 +227,48 @@ const open = () => {
 
 const handleCancel = () => {
   state.visable = false;
+  form.value = null;
+  state.optionsData = [];
   informationStore.initCurInformation(null);
 };
 
-const handleConfirm = values => {
-  console.log("=============", values);
-};
+const handleConfirm = async values => {
+  const data = getKeyParams(values, [
+    "itemNumber",
+    "brandId",
+    "sku",
+    "spu",
+    "quantity",
+    "specifications",
+    "barcode",
+    "customscode",
+    "description",
+    "color",
+    "dwPrice",
+    "typeId"
+  ]);
+  data["options"] = state.optionsData.reduce((pre, cur) => {
+    return {
+      ...pre,
+      [cur.name]: cur.value
+    };
+  }, {});
 
-/**
- * 监听开始
- */
-/* watch(
-  () => form.value?.typeId,
-  type => {
-    handleTypeChange(type);
+  const type = informationStore.$state.state.type === "Add";
+
+  let res;
+
+  if (type) {
+    res = await handleInformationAdd(data);
+  } else {
+    res = await handleInformationUpdate(data);
   }
-); */
+  if (res.success) {
+    informationStore.initInformation();
+    successMes(res.data);
+    handleCancel();
+  }
+};
 
 /**
  * 初始化处理 产品类别、品牌基础数据

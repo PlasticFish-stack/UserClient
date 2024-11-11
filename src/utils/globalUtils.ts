@@ -5,3 +5,14 @@ export const resetReactiveState = (reactiveState, initialState) => {
     }
   });
 };
+
+export const getKeyParams = (data, keys: string[] = []) => {
+  return Object.keys(data).reduce((pre, key) => {
+    return keys.includes(key)
+      ? {
+          ...pre,
+          [key]: data[key]
+        }
+      : pre;
+  }, {});
+};

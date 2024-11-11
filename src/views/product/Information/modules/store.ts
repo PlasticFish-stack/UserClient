@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 import type { StateProps } from "./types";
-import { getInformation, type InformationTypes } from "@/api/information";
+import { getInformation } from "@/api/information";
 
 const useInformationStore = defineStore("Information", () => {
   const state = reactive<StateProps>({
@@ -22,7 +22,7 @@ const useInformationStore = defineStore("Information", () => {
     state.loading = false;
   };
 
-  const initCurInformation = (row: InformationTypes) => {
+  const initCurInformation = row => {
     state.curInformation = row;
   };
 

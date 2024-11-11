@@ -73,3 +73,15 @@ export const getInformation = params => {
     params
   });
 };
+
+export const handleInformationAdd = data => {
+  return http.request<InformationReqResult>("post", "/product/product/add", {
+    data
+  });
+};
+
+export const handleInformationUpdate = data => {
+  return http.request<InformationReqResult>("post", "/product/product/update", {
+    data
+  });
+};
