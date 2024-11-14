@@ -3,21 +3,21 @@ import { computed, onMounted, ref } from "vue";
 import useInformationStore from "./modules/store";
 import { useColumns } from "./modules/config";
 import DetailDrawer from "./components/DetailDrawer.vue";
+import InformationDrawer from "./components/InformationDrawer.vue";
 
 const informationStore = useInformationStore();
 
-const informationFormRef = ref(null);
+const informationRef = ref(null);
 const detailDrawerRef = ref(null);
 
 const {
   columns,
-  expandColumns,
   pagination,
   loadingConfig,
   adaptiveConfig,
   onSizeChange,
   onCurrentChange
-} = useColumns(informationFormRef, detailDrawerRef);
+} = useColumns(informationRef, detailDrawerRef);
 
 const informationData = computed(
   () => informationStore.$state.state.informationData
@@ -72,13 +72,8 @@ onMounted(() => {
       :pagination="pagination"
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"
-    >
-      <!--   <template #expand="{ row }">
-        <div>
-          <pure-table stripe :data="row.costs" :columns="expandColumns" />
-        </div>
-      </template> -->
-    </pure-table>
+    />
+    <InformationDrawer ref="informationRef" />
     <DetailDrawer ref="detailDrawerRef" />
   </div>
 </template>

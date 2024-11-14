@@ -85,3 +85,9 @@ export const handleInformationUpdate = data => {
     data
   });
 };
+
+export const handleInformationDelete = data => {
+  return http.request<InformationReqResult>("post", "/product/product/delete", {
+    data
+  });
+};

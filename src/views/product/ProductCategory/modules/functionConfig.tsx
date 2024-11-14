@@ -1,4 +1,5 @@
 import type { CategoryFormulasTypes } from "@/api/productCategory";
+import { QuestionFilled } from "@element-plus/icons-vue";
 
 export function useColumns() {
   const columns: TableColumnList = [
@@ -15,18 +16,48 @@ export function useColumns() {
     {
       label: "函数",
       prop: "formula",
-      cellRenderer: ({ row }) => <el-input v-model={row.formula} />
+      cellRenderer: ({ row }) => <el-input v-model={row.formula} />,
+      headerRenderer: () => (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <span>函数</span>
+          <el-tooltip
+            effect="dark"
+            placement="top-start"
+            v-slots={{
+              content: () => (
+                <>
+                  <div>例:n为实际数额 </div>
+                  <div>例:n + 1,预览值填1时,值为2 </div>
+                  <div>例:n + n * 20%,预览值为1时，值为1.2</div>
+                </>
+              )
+            }}
+          >
+            <el-icon>
+              <QuestionFilled />
+            </el-icon>
+          </el-tooltip>
+        </div>
+      )
     },
     {
-      label: "预览值",
+      label: "n 值",
       prop: "previewValue",
-      cellRenderer: ({ row }) => (
-        <el-input-number
-          v-model={row.previewValue}
-          size="small"
-          controls-position="right"
-        />
-      )
+      cellRenderer: ({ row }) => {
+        return (
+          <el-input-number
+            v-model={row.previewValue}
+            size="small"
+            controls-position="right"
+          />
+        );
+      }
     },
     {
       label: "预览",
@@ -42,13 +73,22 @@ export function useColumns() {
     }
   ];
 
+  const checkFormula = formula => {
+    const regex = /\b(const|let|var|function)\b/;
+    return regex.test(formula);
+  };
+
   function computedPreviewValue(row: CategoryFormulasTypes) {
     try {
+      if (row.formula.indexOf("n") === -1) return "-";
       const n = row["previewValue"];
       if (!n || typeof n !== "number") return "-";
       const expression = row.formula;
+
+      if (checkFormula(expression)) return "???";
+
       let result = eval(expression.replace(/n/g, String(n)));
-      return Math.round(result * 100) / 100 + "%";
+      return String(Math.round(result * 100) / 100);
     } catch (err) {
       return "-";
     }

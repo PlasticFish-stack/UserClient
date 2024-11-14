@@ -3,14 +3,14 @@ import type {
   LoadingConfig,
   PaginationProps
 } from "@pureadmin/table";
-// import { delay } from "@pureadmin/utils";
+import { delay } from "@pureadmin/utils";
 import { formatGolangDate } from "@/utils/time/date";
 import { reactive } from "vue";
 import { ElPopconfirm } from "element-plus";
 import useInformationStore from "./store";
 import type { InformationTypes } from "@/api/information";
 
-export function useColumns(informationFormRef, detailDrawerRef) {
+export function useColumns(informationRef, detailDrawerRef) {
   const informationStore = useInformationStore();
 
   const loadingConfig = reactive<LoadingConfig>({
@@ -74,17 +74,12 @@ export function useColumns(informationFormRef, detailDrawerRef) {
   };
 
   const handleDelete = (row: InformationTypes) => {
-    console.log("===========", row);
-    // const { id } = row;
-    /*  informationStore.deleteBrand([
-      {
-        id
-      }
-    ]); */
+    informationStore.deleteInformation(row);
   };
 
-  const indexMethod = (index: number) => {
-    return index + 1;
+  const handleView = row => {
+    informationStore.initCurInformation(row);
+    informationRef.value?.open();
   };
 
   const columns = reactive<TableColumnList>([
@@ -95,7 +90,12 @@ export function useColumns(informationFormRef, detailDrawerRef) {
     {
       label: "货号",
       prop: "itemNumber",
-      width: "150px"
+      width: "150px",
+      cellRenderer: ({ row }) => (
+        <el-button type="primary" link onClick={() => handleView(row)}>
+          {row.itemNumber}
+        </el-button>
+      )
     },
     {
       label: "sku",
@@ -194,44 +194,21 @@ export function useColumns(informationFormRef, detailDrawerRef) {
     }
   ]);
 
-  const expandColumns = reactive<TableColumnList>([
-    {
-      type: "index",
-      index: indexMethod
-    },
-    {
-      label: "表格名称",
-      prop: "excelLogId"
-    },
-    {
-      label: "成本价",
-      prop: "cost"
-    },
-    {
-      label: "货币名称",
-      prop: "currencyName"
-    },
-    {
-      label: "货币税率",
-      prop: "currencyCost"
-    }
-  ]);
-
   function onSizeChange(val) {
     console.log("onSizeChange=====", val);
   }
 
   function onCurrentChange(val) {
     loadingConfig.text = `正在加载第${val}页...`;
-    /* informationStore.loadingTarget(true);
+    informationStore.loadingTarget(true);
     delay().then(() => {
       informationStore.loadingTarget(false);
     });
-    informationStore.loadingTarget(false); */
+    informationStore.loadingTarget(false);
   }
+
   return {
     columns,
-    expandColumns,
     pagination,
     loadingConfig,
     adaptiveConfig,

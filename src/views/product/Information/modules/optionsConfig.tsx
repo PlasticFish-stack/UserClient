@@ -11,7 +11,14 @@ export function useOptionsColumns() {
     }
   ];
 
+  const optionsColumns = columns.map(item => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { cellRenderer, ...args } = item;
+    return args;
+  });
+
   return {
-    columns
+    columns,
+    optionsColumns
   };
 }
