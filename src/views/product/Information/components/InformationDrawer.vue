@@ -17,12 +17,13 @@ const { optionsColumns } = useOptionsColumns();
 const defaultState = {
   visible: false,
   form: null,
-  title: "查看产品信息",
-  categoryData: [],
-  brandData: [],
-  categoryMapping: {},
-  brandMapping: {}
+  title: "查看产品信息"
 };
+
+const categoryMapping = computed(
+  () => informationStore.$state.state.categoryMapping
+);
+const brandMapping = computed(() => informationStore.$state.state.brandMapping);
 
 const state = reactive(cloneDeep(defaultState));
 
@@ -98,8 +99,8 @@ const open = () => {
   const fields = row.options || {};
   row.options = handleIntegrationOptions(fields);
 
-  row.brandLabel = state.brandMapping[row.brandId]?.name;
-  row.typeLabel = state.categoryMapping[row.typeId]?.name;
+  row.brandLabel = brandMapping.value?.[row.brandId]?.name;
+  row.typeLabel = categoryMapping.value?.[row.typeId]?.name;
 
   state.form = row;
 };
@@ -108,54 +109,6 @@ const handleCancel = () => {
   resetReactiveState(state, defaultState);
   state.visible = false;
 };
-
-/**
- * 初始化处理 产品类别、品牌基础数据
- */
-// 递归读取名称
-const recursionCategory = list => {
-  return list.reduce((pre, cur) => {
-    pre = {
-      ...pre,
-      [cur.id]: cur
-    };
-    if (cur.children) {
-      return {
-        ...pre,
-        ...recursionCategory(cur.children)
-      };
-    }
-    return pre;
-  }, {});
-};
-const recursionCategoryAddOptions = list => {
-  return list.reduce((pre, cur) => {
-    pre = [
-      ...pre,
-      {
-        ...cur,
-        label: cur.name,
-        value: cur.id,
-        children: recursionCategoryAddOptions(cur.children || [])
-      }
-    ];
-    return pre;
-  }, []);
-};
-
-onMounted(async () => {
-  const categoryRes = await getCategory();
-  const brandRes = await getBrand();
-
-  state.categoryData = recursionCategoryAddOptions(categoryRes.data.data || []);
-  state.brandData = brandRes.data.map(item => ({
-    ...item,
-    label: item.name,
-    value: item.id
-  }));
-  state.categoryMapping = recursionCategory(state.categoryData);
-  state.brandMapping = recursionCategory(state.brandData);
-});
 
 defineExpose({
   open

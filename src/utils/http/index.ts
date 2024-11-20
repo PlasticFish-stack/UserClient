@@ -166,6 +166,7 @@ class PureHttp {
       PureHttp.axiosInstance
         .request(config)
         .then((response: undefined) => {
+          console.log("=========", response);
           resolve(response);
         })
         .catch(error => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h, onMounted, reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import useInformationStore from "../modules/store";
 import {
   handleInformationAdd,
@@ -9,8 +9,6 @@ import {
 import { PlusColumn, PlusDrawerForm } from "plus-pro-components";
 import { useOptionsColumns } from "../modules/optionsConfig";
 import { FormRules } from "element-plus";
-import { getBrand } from "@/api/brand";
-import { getCategory } from "@/api/productCategory";
 import { cloneDeep } from "@pureadmin/utils";
 import { successMes } from "@/utils/globalReqMes";
 import { getKeyParams } from "@/utils/globalUtils";
@@ -21,11 +19,7 @@ const { columns: optionsColumns } = useOptionsColumns();
 const state = reactive({
   visable: false,
   optionsData: [],
-  loading: false,
-  categoryData: [],
-  brandData: [],
-  categoryMapping: {},
-  brandMapping: {}
+  loading: false
 });
 
 const form = ref<InformationTypes>(null);
@@ -34,6 +28,12 @@ const title = computed(
   () =>
     (informationStore.$state.state.type === "Add" ? "新增" : "编辑") +
     "品牌信息"
+);
+
+const categoryData = computed(() => informationStore.$state.state.categoryData);
+const brandData = computed(() => informationStore.$state.state.brandData);
+const categoryMapping = computed(
+  () => informationStore.$state.state.categoryMapping
 );
 
 const rules = reactive<FormRules>({
@@ -75,7 +75,7 @@ const columns = reactive<PlusColumn[]>([
       span: 12
     },
     fieldProps: {
-      data: computed(() => state.categoryData),
+      data: computed(() => categoryData.value),
       showCheckbox: true,
       defaultExpandAll: true,
       clearable: false,
@@ -99,7 +99,7 @@ const columns = reactive<PlusColumn[]>([
     fieldProps: {
       clearable: true
     },
-    options: computed(() => state.brandData)
+    options: computed(() => brandData.value)
   },
   {
     label: "sku",
@@ -189,7 +189,7 @@ const initOptions = options => {
 const handleTypeChange = (type, initialOptionsData?) => {
   const optionsData = initialOptionsData || state.optionsData;
   const fields =
-    state.categoryMapping[type] && state.categoryMapping[type].fields;
+    categoryMapping.value?.[type] && categoryMapping.value?.[type].fields;
   if (!fields) return;
 
   const comOptionsMapping = optionsData.reduce((pre, cur) => {
@@ -304,20 +304,6 @@ const recursionCategoryAddOptions = list => {
   }, []);
 };
 
-onMounted(async () => {
-  const categoryRes = await getCategory();
-  const brandRes = await getBrand();
-
-  state.categoryData = recursionCategoryAddOptions(categoryRes.data.data || []);
-  state.brandData = brandRes.data.map(item => ({
-    ...item,
-    label: item.name,
-    value: item.id
-  }));
-  state.categoryMapping = recursionCategory(state.categoryData);
-  state.brandMapping = recursionCategory(state.brandData);
-});
-
 defineExpose({
   open
 });
@@ -338,9 +324,7 @@ defineExpose({
     cancel-text="取消"
     confirm-text="确定"
     :confirm-loading="state.loading"
-    :closeOnClickModal="true"
-    :closeOnPressEscape="true"
-    :modal="false"
+    :closeOnClickModal="false"
     @cancel="handleCancel"
     @confirm="handleConfirm"
   >

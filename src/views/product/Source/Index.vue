@@ -1,9 +1,27 @@
 <script setup lang="ts">
+import { getExport } from "@/api/source";
 import { UploadFilled } from "@element-plus/icons-vue";
+import { onMounted, ref } from "vue";
+import ExportDialog from "./components/ExportDialog.vue";
+
+const exportRef = ref(null);
+
+const handleOpen = () => {
+  exportRef.value.open();
+};
+
+onMounted(async () => {
+  /* const res = await getExport({
+    currencyName: "CNY",
+    productTypeId: 3,
+    productBrandId: 3
+  }); */
+});
 </script>
 
 <template>
   <div class="main">
+    <el-button @click="handleOpen">打开弹窗表单</el-button>
     <el-upload
       class="upload-demo"
       drag
@@ -20,6 +38,7 @@ import { UploadFilled } from "@element-plus/icons-vue";
         </div>
       </template>
     </el-upload>
+    <ExportDialog ref="exportRef" />
   </div>
 </template>
 
