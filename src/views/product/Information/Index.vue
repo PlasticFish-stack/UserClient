@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import useInformationStore from "./modules/store";
 import { useColumns } from "./modules/config";
 import DetailDrawer from "./components/DetailDrawer.vue";
 import InformationDrawer from "./components/InformationDrawer.vue";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Plane from "@iconify-icons/ri/plane-line";
-import Refresh from "@iconify-icons/ep/refresh";
+import { PlusForm, type PlusColumn } from "plus-pro-components";
 
 const informationStore = useInformationStore();
 
@@ -22,14 +20,66 @@ const {
   onCurrentChange
 } = useColumns(informationRef, detailDrawerRef);
 
-const form = ref({
-  username: ""
-});
-
 const informationData = computed(
   () => informationStore.$state.state.informationData
 );
+const categoryData = computed(() => informationStore.$state.state.categoryData);
+const brandData = computed(() => informationStore.$state.state.brandData);
 const loading = computed(() => informationStore.$state.state.loading);
+const form = computed(() => informationStore.$state.form);
+
+const formColumns: PlusColumn[] = [
+  {
+    label: "货号",
+    prop: "itemNumber",
+    valueType: "input"
+  },
+  {
+    label: "类别",
+    prop: "typeId",
+    valueType: "tree-select",
+    fieldProps: {
+      data: computed(() => categoryData.value),
+      showCheckbox: true,
+      defaultExpandAll: true,
+      clearable: false,
+      multiple: false,
+      checkStrictly: true,
+      style: {
+        width: "100%"
+      }
+    }
+  },
+  {
+    label: "品牌",
+    prop: "brandId",
+    valueType: "select",
+    fieldProps: {
+      clearable: true
+    },
+    options: computed(() => brandData.value)
+  },
+  {
+    label: "创建日期",
+    prop: "createTimeRange",
+    valueType: "date-picker",
+    fieldProps: {
+      type: "daterange",
+      startPlaceholder: "起始时间",
+      endPlaceholder: "结束时间"
+    }
+  },
+  {
+    label: "更新日期",
+    prop: "updateTimeRange",
+    valueType: "date-picker",
+    fieldProps: {
+      type: "daterange",
+      startPlaceholder: "起始时间",
+      endPlaceholder: "结束时间"
+    }
+  }
+];
 
 const addInformationForm = () => {
   informationStore.typeChange("Add");
@@ -51,51 +101,56 @@ const addInformationForm = () => {
   detailDrawerRef.value.open();
 };
 
-const resetForm = () => {
-  form.value = null;
+const handleReset = () => {
+  informationStore.handelReset();
 };
 
-watch(form, params => {
-  console.log("===========", params);
-});
+const handleSubmit = values => {
+  console.log("=========", values);
+  informationStore.handleFormChange(values);
+
+  informationStore.initInformation({
+    pageNum: pagination.currentPage,
+    pageSize: pagination.pageSize
+  });
+};
 
 onMounted(() => {
-  informationStore.init();
+  informationStore.init({
+    pageNum: pagination.currentPage,
+    pageSize: pagination.pageSize
+  });
 });
 </script>
 
 <template>
   <div class="main">
-    <el-form
-      ref="formRef"
-      :inline="true"
-      :model="form"
-      class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto mb-2"
+    <div
+      class="search-form bg-bg_color w-[99/100] pl-4 pr-4 pt-[12px] overflow-auto mb-2"
     >
-      <el-form-item label="用户名" prop="username">
-        <el-input
-          v-model="form.username"
-          placeholder="请输入用户名"
-          clearable
-          class="!w-[180px]"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon('ri:search-line')"
-          :loading="loading"
-        >
-          搜索
-        </el-button>
-        <el-button :icon="useRenderIcon(Refresh)" @click="resetForm">
-          重置
-        </el-button>
-        <el-button type="primary" @click="addInformationForm">
-          新增产品信息
-        </el-button>
-      </el-form-item>
-    </el-form>
+      <PlusForm
+        v-model="form"
+        :columns="formColumns"
+        :row-props="{
+          gutter: 16
+        }"
+        :col-props="{
+          span: 8
+        }"
+        @submit="handleSubmit"
+        @reset="handleReset"
+      >
+        <template #footer="{ handleSubmit, handleReset }">
+          <div class="flex justify-end pb-4">
+            <el-button type="primary" @click="addInformationForm">
+              新增产品信息
+            </el-button>
+            <el-button type="default" @click="handleReset">重置</el-button>
+            <el-button type="primary" @click="handleSubmit">搜索</el-button>
+          </div>
+        </template></PlusForm
+      >
+    </div>
 
     <pure-table
       ref="tableRef"

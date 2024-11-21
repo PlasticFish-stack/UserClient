@@ -195,7 +195,11 @@ export function useColumns(informationRef, detailDrawerRef) {
   ]);
 
   function onSizeChange(val) {
-    console.log("onSizeChange=====", val);
+    pagination.pageSize = val;
+    informationStore.initInformation({
+      pageNum: pagination.currentPage,
+      pageSize: pagination.pageSize
+    });
   }
 
   function onCurrentChange(val) {

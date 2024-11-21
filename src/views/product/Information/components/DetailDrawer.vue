@@ -12,8 +12,10 @@ import { FormRules } from "element-plus";
 import { cloneDeep } from "@pureadmin/utils";
 import { successMes } from "@/utils/globalReqMes";
 import { getKeyParams } from "@/utils/globalUtils";
+import { useColumns } from "../modules/config";
 
 const informationStore = useInformationStore();
+const { pagination } = useColumns(null, null);
 const { columns: optionsColumns } = useOptionsColumns();
 
 const state = reactive({
@@ -264,7 +266,10 @@ const handleConfirm = async values => {
     res = await handleInformationUpdate(data);
   }
   if (res.success) {
-    informationStore.initInformation();
+    informationStore.initInformation({
+      pageNum: pagination.currentPage,
+      pageSize: pagination.pageSize
+    });
     successMes(res.data);
     handleCancel();
   }
