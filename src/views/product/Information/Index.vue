@@ -106,7 +106,6 @@ const handleReset = () => {
 };
 
 const handleSubmit = values => {
-  console.log("=========", values);
   informationStore.handleFormChange(values);
 
   informationStore.initInformation({
@@ -162,12 +161,7 @@ onMounted(() => {
       showOverflowTooltip
       :loading="loading"
       :loading-config="loadingConfig"
-      :data="
-        informationData.slice(
-          (pagination.currentPage - 1) * pagination.pageSize,
-          pagination.currentPage * pagination.pageSize
-        )
-      "
+      :data="informationData"
       :columns="columns"
       :pagination="pagination"
       @page-size-change="onSizeChange"

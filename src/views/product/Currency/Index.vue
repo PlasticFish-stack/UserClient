@@ -2,18 +2,24 @@
 import {
   computed,
   defineComponent,
+  InjectionKey,
   onMounted,
   onUnmounted,
+  provide,
   reactive,
   ref
 } from "vue";
 import { useCurrencyStore } from "./CoreModules/store";
-import { Edit, Star, StarFilled } from "@element-plus/icons-vue";
 import CurrencyDialog from "./components/CurrencyDialog.vue";
 import { CurrencyTypes, synchronousCurrency } from "@/api/currency";
 import { cloneDeep } from "@pureadmin/utils";
-import Icon from "./components/Icon.vue";
-import CN from "@/assets/flags/4x3/cn.svg?component";
+import IconContainer from "./components/IconContainer.vue";
+import {
+  EditCurrencyFunction,
+  editCurrencyKey,
+  StarChangeFunction,
+  starChangeKey
+} from "./CoreModules/types";
 
 defineComponent({
   name: "ProductCurrency"
@@ -40,21 +46,29 @@ const state = reactive(cloneDeep(defaultState));
 
 const currencyData = computed(() => {
   const data = currencyStore.$state.store.currencyData;
+  // const checkStars = data
+  //   .flatMap(item => (state.stars[item.id] ? [item] : []))
+  //   .sort((a, b) => a.sort - b.sort);
+
+  // const endData = checkStars.concat(data.filter(c => !state.stars[c.id]));
+
+  // return endData;
+  return data.filter(c => !state.stars[c.id]);
+});
+const starCurrencyData = computed(() => {
+  const data = currencyStore.$state.store.currencyData;
   const checkStars = data
     .flatMap(item => (state.stars[item.id] ? [item] : []))
     .sort((a, b) => a.sort - b.sort);
-
-  const endData = checkStars.concat(data.filter(c => !state.stars[c.id]));
-
-  return endData;
+  return checkStars;
 });
 
-const editCurrency = (row: CurrencyTypes) => {
+const editCurrency: EditCurrencyFunction = (row: CurrencyTypes) => {
   currencyStore.$state.store.rowData = row;
   currencyDiaRef.value.open();
 };
 
-const handleStar = (row: CurrencyTypes) => {
+const starChange: StarChangeFunction = (row: CurrencyTypes) => {
   const stars = state.stars;
 
   const status = !!stars[row.id];
@@ -80,6 +94,9 @@ onMounted(() => {
 onUnmounted(() => {
   localStorage.setItem("stars", JSON.stringify(state.stars));
 });
+
+provide(editCurrencyKey, editCurrency);
+provide(starChangeKey, starChange);
 </script>
 
 <template>
@@ -92,50 +109,16 @@ onUnmounted(() => {
         >同步货币信息</el-button
       >
     </div>
-    <el-row :gutter="20">
-      <el-col
-        v-for="item in currencyData"
-        :key="item.id"
-        :span="3"
-        :xs="8"
-        :sm="6"
-        :md="4"
-        :lg="3"
-        :xl="2"
-      >
-        <div class="currency-container">
-          <!-- {{ item.countryIcon }} -->
-          <!-- <CN class="CN" /> -->
-          <div class="svg-container">
-            <Icon :name="item.countryIcon" />
-          </div>
-
-          <div class="name">{{ item.currencyName }}</div>
-          <div class="des">{{ item.descriptionCn || "-" }}</div>
-
-          <div class="edit">
-            <el-button
-              type="primary"
-              :icon="Edit"
-              circle
-              @click="() => editCurrency(item)"
-            />
-          </div>
-          <div class="star">
-            <el-button circle type="info" @click="() => handleStar(item)">
-              <template #icon>
-                <el-icon v-if="!state.stars[item.id]" :size="20"
-                  ><Star
-                /></el-icon>
-                <el-icon v-else :size="20"
-                  ><StarFilled color="yellow"
-                /></el-icon>
-              </template>
-            </el-button>
-          </div>
+    <el-card v-if="starCurrencyData.length > 0" class="mb-4">
+      <template #header>
+        <div class="card-header">
+          <h3>收藏</h3>
         </div>
-      </el-col>
-    </el-row>
+      </template>
+      <IconContainer :data="starCurrencyData" :stars="state.stars" />
+    </el-card>
+
+    <IconContainer :data="currencyData" :stars="state.stars" />
     <CurrencyDialog ref="currencyDiaRef" />
   </div>
 </template>
@@ -146,64 +129,6 @@ onUnmounted(() => {
 
   .uptate-currency-warpper {
     margin-bottom: 20px;
-  }
-
-  .currency-container {
-    height: 175px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-    border: 2px solid rgba(204, 204, 204, 0.8);
-    border-radius: 10px;
-    padding: 20px;
-    transition: 0.2s;
-    position: relative;
-
-    &:hover {
-      box-shadow: 0px 7px 30px 0px rgba(100, 100, 111, 0.4);
-
-      .edit {
-        display: block;
-      }
-    }
-
-    .svg-container {
-      width: 100px;
-      height: 70px;
-    }
-
-    .name,
-    .des {
-      max-width: calc(100% - 10px);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowarp;
-      margin-top: 10px;
-    }
-
-    .name {
-      font-size: 16px;
-      color: #0d0d0d;
-    }
-
-    .des {
-      font-size: 14px;
-      color: #2f2c2c;
-    }
-
-    .edit {
-      display: none;
-      position: absolute;
-      top: -10px;
-      right: -10px;
-    }
-    .star {
-      /* display: none; */
-      position: absolute;
-      top: 5px;
-      left: 5px;
-    }
   }
 }
 </style>

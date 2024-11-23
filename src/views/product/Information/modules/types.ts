@@ -15,4 +15,5 @@ export type StateProps = {
   brandMapping: {
     [key: string]: BrandTypes;
   };
+  total: number;
 };

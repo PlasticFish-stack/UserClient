@@ -1,16 +1,35 @@
 <script setup lang="ts">
-import { getExport } from "@/api/source";
-import { UploadFilled } from "@element-plus/icons-vue";
-import { onMounted, ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import ExportDialog from "./components/ExportDialog.vue";
+import useSourceStore from "./modules/store";
+import { useColumns } from "./modules/config";
+
+const sourceStore = useSourceStore();
+
+const {
+  columns,
+  pagination,
+  loadingConfig,
+  adaptiveConfig,
+  onSizeChange,
+  onCurrentChange
+} = useColumns();
 
 const exportRef = ref(null);
+
+const data = computed(() => sourceStore.$state.state.data);
+const loading = computed(() => sourceStore.$state.state.loading);
 
 const handleOpen = () => {
   exportRef.value.open();
 };
 
 onMounted(async () => {
+  const { currentPage: pageNum, pageSize } = pagination;
+  sourceStore.initSoure({
+    pageNum,
+    pageSize
+  });
   /* const res = await getExport({
     currencyName: "CNY",
     productTypeId: 3,
@@ -21,23 +40,24 @@ onMounted(async () => {
 
 <template>
   <div class="main">
-    <el-button @click="handleOpen">打开弹窗表单</el-button>
-    <el-upload
-      class="upload-demo"
-      drag
-      action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-      multiple
-    >
-      <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text">
-        Drop file here or <em>click to upload</em>
-      </div>
-      <template #tip>
-        <div class="el-upload__tip">
-          jpg/png files with a size less than 500kb
-        </div>
-      </template>
-    </el-upload>
+    <el-button class="mb-2" @click="handleOpen">导出模板</el-button>
+
+    <pure-table
+      ref="tableRef"
+      style="border-radius: 8px"
+      adaptive
+      :adaptiveConfig="adaptiveConfig"
+      row-key="id"
+      alignWhole="center"
+      showOverflowTooltip
+      :loading="loading"
+      :loading-config="loadingConfig"
+      :data="data"
+      :columns="columns"
+      :pagination="pagination"
+      @page-size-change="onSizeChange"
+      @page-current-change="onCurrentChange"
+    />
     <ExportDialog ref="exportRef" />
   </div>
 </template>

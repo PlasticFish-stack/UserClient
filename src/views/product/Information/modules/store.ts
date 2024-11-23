@@ -28,7 +28,8 @@ const useInformationStore = defineStore("Information", () => {
     categoryData: [],
     brandData: [],
     categoryMapping: {},
-    brandMapping: {}
+    brandMapping: {},
+    total: 1
   });
 
   const form = ref(cloneDeep(defaultForm));
@@ -36,14 +37,25 @@ const useInformationStore = defineStore("Information", () => {
   const handleSearchParams = () => {
     const params = {};
     Object.keys(form.value).forEach(key => {
-      if (["keyword", "typeId", "brandId"].includes(key)) {
-        params[key] = form.value[key];
-      } else if ("createTimeRange" === key) {
-        params["startCreateTime"] = form.value[key][0] || "";
-        params["endCreateTime"] = form.value[key][1] || "";
-      } else if ("updateTimeRange" === key) {
-        params["startUpdateTime"] = form.value[key][0] || "";
-        params["endUpdateTime"] = form.value[key][1] || "";
+      if (typeof form.value[key] !== "number" && form.value[key]) {
+        if (
+          ["itemNumber", "keyword", "typeId", "brandId"].includes(key) &&
+          typeof form.value[key] !== "number" &&
+          form.value[key]
+        ) {
+          params[key] = form.value[key];
+        } else if (
+          Array.isArray(form.value[key]) &&
+          form.value[key].length === 2
+        ) {
+          if ("createTimeRange" === key) {
+            params["startCreateTime"] = form.value[key][0] || "";
+            params["endCreateTime"] = form.value[key][1] || "";
+          } else if ("updateTimeRange" === key) {
+            params["startUpdateTime"] = form.value[key][0] || "";
+            params["endUpdateTime"] = form.value[key][1] || "";
+          }
+        }
       }
     });
 
@@ -65,6 +77,8 @@ const useInformationStore = defineStore("Information", () => {
     });
     state.informationData = res.data.data;
     state.loading = false;
+
+    state.total = res.data.limits.total;
   };
 
   /**

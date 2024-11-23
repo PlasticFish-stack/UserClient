@@ -1,18 +1,21 @@
+import { computed, reactive, watch } from "vue";
+import useSourceStore from "./store";
 import type {
   AdaptiveConfig,
   LoadingConfig,
   PaginationProps
 } from "@pureadmin/table";
-import { delay } from "@pureadmin/utils";
 import { formatGolangDate } from "@/utils/time/date";
-import { reactive } from "vue";
-import { ElPopconfirm } from "element-plus";
+import { delay } from "@pureadmin/utils";
+import type { SourceTypes } from "@/api/source";
 
-import useBrandStore from "./store";
-import type { BrandTypes } from "@/api/brand";
+export function useColumns() {
+  const sourceStore = useSourceStore();
 
-export function useColumns(brandFormRef) {
-  const brandStore = useBrandStore();
+  const total = computed(
+    () => (sourceStore.$state && sourceStore.$state.state.total) || 1
+  );
+
   const loadingConfig = reactive<LoadingConfig>({
     text: "正在加载第一页...",
     viewBox: "-10, -10, 50, 50",
@@ -54,9 +57,6 @@ export function useColumns(brandFormRef) {
       prop: key,
       headerRenderer: () => (
         <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0">
-            {/* <iconify-icon-online icon="ep:timer" /> */}
-          </div>
           <div>
             <span>{title}</span>
           </div>
@@ -70,84 +70,69 @@ export function useColumns(brandFormRef) {
     };
   };
 
-  const handleEdit = (row: BrandTypes) => {
-    brandStore.initCurBrand(row);
-    brandStore.typeChange("Edit");
-    brandFormRef.value?.open();
+  const handleEdit = (row: SourceTypes) => {
+    console.log("============", row);
   };
 
-  const handleDelete = (row: BrandTypes) => {
-    const { id } = row;
-    brandStore.deleteBrand([
-      {
-        id
-      }
-    ]);
-  };
-
-  const columns: TableColumnList = [
+  const columns = reactive<TableColumnList>([
     {
-      label: "品牌",
-      prop: "name"
+      label: "文件名",
+      prop: "fileName",
+      showOverflowTooltip: true
     },
     {
-      label: "昵称",
-      prop: "description"
+      label: "备注",
+      prop: "description",
+      showOverflowTooltip: true
     },
-    timeRenderContainer("updateTime", "更新时间"),
     timeRenderContainer("createTime", "创建时间"),
+    timeRenderContainer("updateTime", "更新时间"),
     {
       label: "操作选项",
       prop: "",
+      width: "150px",
+      fixed: "right",
       cellRenderer: ({ row }) => (
         <>
           <el-button
             type="primary"
             size="small"
-            onClick={() => {
-              handleEdit(row);
-            }}
+            onClick={() => handleEdit(row)}
           >
             编辑
           </el-button>
-          <ElPopconfirm
-            width="220"
-            title="是否要删除该品牌"
-            confirm-button-text="删除"
-            cancel-button-text="返回"
-            confirmButtonType="danger"
-            onConfirm={() => handleDelete(row)}
-            v-slots={{
-              reference: () => (
-                <el-button type="danger" size="small">
-                  {" "}
-                  删除
-                </el-button>
-              )
-            }}
-          ></ElPopconfirm>
         </>
       )
     }
-  ];
+  ]);
 
   function onSizeChange(val) {
-    console.log("onSizeChange=====", val);
+    pagination.pageSize = val;
+
+    sourceStore.initSoure({
+      pageNum: pagination.currentPage,
+      pageSize: pagination.pageSize
+    });
   }
 
   function onCurrentChange(val) {
     loadingConfig.text = `正在加载第${val}页...`;
-    brandStore.loadingTarget(true);
+    sourceStore.loadingTarget(true);
     delay().then(() => {
-      brandStore.loadingTarget(false);
+      sourceStore.loadingTarget(false);
     });
-    brandStore.loadingTarget(false);
+    sourceStore.loadingTarget(false);
   }
+
+  watch(total, newTotal => {
+    pagination.total = newTotal;
+  });
+
   return {
     columns,
-    pagination,
     loadingConfig,
     adaptiveConfig,
+    pagination,
     onSizeChange,
     onCurrentChange
   };

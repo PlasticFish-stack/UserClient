@@ -233,7 +233,7 @@ export function useColumns() {
           </el-button>
           <ElPopconfirm
             width="220"
-            title="是否要删除该角色"
+            title="是否要删除该菜单"
             confirm-button-text="删除"
             cancel-button-text="返回"
             confirmButtonType="danger"

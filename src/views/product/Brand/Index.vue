@@ -35,7 +35,7 @@ onMounted(() => {
 
 <template>
   <div class="main">
-    <el-button class="mb-2" @click="addBrandForm">新建用户</el-button>
+    <el-button class="mb-2" @click="addBrandForm">新建品牌</el-button>
     <pure-table
       ref="tableRef"
       style="border-radius: 8px"

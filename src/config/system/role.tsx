@@ -138,6 +138,7 @@ export function useColumns() {
             type="primary"
             size="small"
             onClick={() => handleEdit(index + 1, row)}
+            link
           >
             编辑
           </el-button>
@@ -145,6 +146,7 @@ export function useColumns() {
             type="success"
             size="small"
             onClick={() => handleBingMenu(row)}
+            link
           >
             绑定
           </el-button>
@@ -157,7 +159,7 @@ export function useColumns() {
             onConfirm={() => handleDelete(index + 1, row)}
             v-slots={{
               reference: () => (
-                <el-button type="danger" size="small">
+                <el-button type="danger" size="small" link>
                   {" "}
                   删除
                 </el-button>

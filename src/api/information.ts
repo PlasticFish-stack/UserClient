@@ -1,4 +1,5 @@
 import { http } from "@/utils/http";
+import type { LimitsTypes } from "./types";
 
 export type CostsTypes = {
   /* 产品ID */
@@ -47,13 +48,6 @@ export type InformationTypes = {
   options: {
     [key: string]: string;
   };
-};
-
-export type LimitsTypes = {
-  total: number;
-  pageSize: number;
-  pageNum: number;
-  pages: number;
 };
 
 export type InformationResult = {

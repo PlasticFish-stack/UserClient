@@ -5,13 +5,17 @@ import type {
 } from "@pureadmin/table";
 import { delay } from "@pureadmin/utils";
 import { formatGolangDate } from "@/utils/time/date";
-import { reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 import { ElPopconfirm } from "element-plus";
 import useInformationStore from "./store";
 import type { InformationTypes } from "@/api/information";
 
 export function useColumns(informationRef, detailDrawerRef) {
   const informationStore = useInformationStore();
+
+  const total = computed(
+    () => (informationStore.$state && informationStore.$state.state.total) || 1
+  );
 
   const loadingConfig = reactive<LoadingConfig>({
     text: "正在加载第一页...",
@@ -147,8 +151,8 @@ export function useColumns(informationRef, detailDrawerRef) {
       prop: "description",
       width: "150px"
     },
-    timeRenderContainer("updateTime", "更新时间"),
     timeRenderContainer("createTime", "创建时间"),
+    timeRenderContainer("updateTime", "更新时间"),
     /* {
       label: "成本价表",
       prop: "costs"
@@ -210,6 +214,10 @@ export function useColumns(informationRef, detailDrawerRef) {
     });
     informationStore.loadingTarget(false);
   }
+
+  watch(total, newTotal => {
+    pagination.total = newTotal;
+  });
 
   return {
     columns,

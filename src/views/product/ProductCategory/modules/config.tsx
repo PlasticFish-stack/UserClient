@@ -55,10 +55,6 @@ export function useColumns(categoryRef) {
     // zIndex: 100
   };
 
-  const indexMethod = (index: number) => {
-    return index + 1;
-  };
-
   const targetScript = (row: CategoryTypes, f: CategoryFormulasTypes) => {
     const tax = String(row.tax);
     const script = f.formula.replace(/n/g, tax);
@@ -81,10 +77,6 @@ export function useColumns(categoryRef) {
   }
 
   const columns = reactive<TableColumnList>([
-    {
-      type: "index",
-      index: indexMethod
-    },
     {
       label: "类别名称",
       prop: "name",
