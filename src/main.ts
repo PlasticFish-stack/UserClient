@@ -27,6 +27,8 @@ import "./assets/iconfont/iconfont.css";
 // 引入货币图标
 import "flag-icons/css/flag-icons.min.css";
 
+import "plus-pro-components/index.css";
+
 const app = createApp(App);
 
 // 自定义指令

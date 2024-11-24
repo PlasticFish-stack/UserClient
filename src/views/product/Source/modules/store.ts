@@ -8,6 +8,7 @@ import {
   recursionCategoryAddOptions
 } from "@/utils/globalUtils";
 import { getBrand } from "@/api/brand";
+import { getCurrency } from "@/api/currency";
 
 const useSourceStore = defineStore("Source", () => {
   const state = reactive<StateProps>({
@@ -17,7 +18,8 @@ const useSourceStore = defineStore("Source", () => {
     categoryData: [],
     brandData: [],
     categoryMapping: {},
-    brandMapping: {}
+    brandMapping: {},
+    currencyData: []
   });
 
   const initSoure = async ({
@@ -54,6 +56,13 @@ const useSourceStore = defineStore("Source", () => {
     state.brandMapping = recursionCategory(state.brandData);
   };
 
+  const initCurrency = async () => {
+    const res = await getCurrency();
+    if (res.success) {
+      state.currencyData = res.data.sort((a, b) => a.sort - b.sort);
+    }
+  };
+
   const init = ({
     pageNum = 1,
     pageSize = 10
@@ -67,6 +76,7 @@ const useSourceStore = defineStore("Source", () => {
     });
     initCategory();
     initBrand();
+    initCurrency();
   };
 
   const loadingTarget = (bool: boolean) => {

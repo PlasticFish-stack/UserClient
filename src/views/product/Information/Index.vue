@@ -76,8 +76,13 @@ const formColumns: PlusColumn[] = [
     valueType: "input"
   },
   {
-    label: "海关编码",
+    label: "条形码",
     prop: "barcode",
+    valueType: "input"
+  },
+  {
+    label: "海关编码",
+    prop: "customscode",
     valueType: "input"
   },
   {
@@ -166,7 +171,7 @@ onMounted(() => {
         @reset="handleReset"
       >
         <template #footer="{ handleSubmit, handleReset }">
-          <div class="flex justify-between pb-4">
+          <div class="flex-1 flex justify-between pb-4">
             <el-button type="primary" @click="addInformationForm">
               新增产品信息
             </el-button>

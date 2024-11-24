@@ -20,6 +20,12 @@ const useInformationStore = defineStore("Information", () => {
     itemNumber: "",
     typeId: "",
     brandId: "",
+    sku: "",
+    spu: "",
+    specifications: "",
+    barcode: "",
+    customscode: "",
+    color: "",
     createTimeRange: [],
     updateTimeRange: []
   };
@@ -43,7 +49,18 @@ const useInformationStore = defineStore("Information", () => {
     Object.keys(form.value).forEach(key => {
       if (typeof form.value[key] !== "number" && form.value[key]) {
         if (
-          ["itemNumber", "keyword", "typeId", "brandId"].includes(key) &&
+          [
+            "itemNumber",
+            "keyword",
+            "typeId",
+            "brandId",
+            "sku",
+            "spu",
+            "specifications",
+            "barcode",
+            "customscode",
+            "color"
+          ].includes(key) &&
           typeof form.value[key] !== "number" &&
           form.value[key]
         ) {
