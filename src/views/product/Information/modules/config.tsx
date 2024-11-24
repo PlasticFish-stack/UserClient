@@ -171,15 +171,15 @@ export function useColumns(informationRef, detailDrawerRef) {
     }
   ]);
 
-  function onSizeChange(val) {
+  const onSizeChange = val => {
     pagination.pageSize = val;
     informationStore.initInformation({
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize
     });
-  }
+  };
 
-  function onCurrentChange(val) {
+  const onCurrentChange = val => {
     loadingConfig.text = `正在加载第${val}页...`;
     informationStore.loadingTarget(true);
     pagination.currentPage = val;
@@ -192,7 +192,7 @@ export function useColumns(informationRef, detailDrawerRef) {
       informationStore.loadingTarget(false);
     });
     informationStore.loadingTarget(false);
-  }
+  };
 
   watch(
     total,

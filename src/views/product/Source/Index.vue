@@ -20,13 +20,13 @@ const exportRef = ref(null);
 const data = computed(() => sourceStore.$state.state.data);
 const loading = computed(() => sourceStore.$state.state.loading);
 
-const handleOpen = () => {
+const handleExport = () => {
   exportRef.value.open();
 };
 
 onMounted(async () => {
   const { currentPage: pageNum, pageSize } = pagination;
-  sourceStore.initSoure({
+  sourceStore.init({
     pageNum,
     pageSize
   });
@@ -40,7 +40,7 @@ onMounted(async () => {
 
 <template>
   <div class="main">
-    <el-button class="mb-2" @click="handleOpen">导出模板</el-button>
+    <el-button class="mb-2" @click="handleExport">导出模板</el-button>
 
     <pure-table
       ref="tableRef"

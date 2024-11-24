@@ -275,40 +275,6 @@ const handleConfirm = async values => {
   }
 };
 
-/**
- * 初始化处理 产品类别、品牌基础数据
- */
-// 递归读取名称
-const recursionCategory = list => {
-  return list.reduce((pre, cur) => {
-    pre = {
-      ...pre,
-      [cur.id]: cur
-    };
-    if (cur.children) {
-      return {
-        ...pre,
-        ...recursionCategory(cur.children)
-      };
-    }
-    return pre;
-  }, {});
-};
-const recursionCategoryAddOptions = list => {
-  return list.reduce((pre, cur) => {
-    pre = [
-      ...pre,
-      {
-        ...cur,
-        label: cur.name,
-        value: cur.id,
-        children: recursionCategoryAddOptions(cur.children || [])
-      }
-    ];
-    return pre;
-  }, []);
-};
-
 defineExpose({
   open
 });

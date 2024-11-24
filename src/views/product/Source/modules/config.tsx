@@ -88,23 +88,28 @@ export function useColumns() {
     }
   ]);
 
-  function onSizeChange(val) {
+  const onSizeChange = val => {
     pagination.pageSize = val;
-
     sourceStore.initSoure({
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize
     });
-  }
+  };
 
-  function onCurrentChange(val) {
+  const onCurrentChange = val => {
     loadingConfig.text = `正在加载第${val}页...`;
     sourceStore.loadingTarget(true);
+    pagination.currentPage = val;
+    sourceStore.initSoure({
+      pageNum: val,
+      pageSize: pagination.pageSize
+    });
+
     delay().then(() => {
       sourceStore.loadingTarget(false);
     });
     sourceStore.loadingTarget(false);
-  }
+  };
 
   watch(total, newTotal => {
     pagination.total = newTotal;

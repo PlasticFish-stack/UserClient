@@ -7,7 +7,11 @@ import { getCategory } from "@/api/productCategory";
 import { getBrand } from "@/api/brand";
 import { useColumns } from "./config";
 import { cloneDeep } from "@pureadmin/utils";
-import { resetReactiveState } from "@/utils/globalUtils";
+import {
+  recursionCategory,
+  recursionCategoryAddOptions,
+  resetReactiveState
+} from "@/utils/globalUtils";
 
 const useInformationStore = defineStore("Information", () => {
   const { pagination } = useColumns(null, null);
@@ -79,40 +83,6 @@ const useInformationStore = defineStore("Information", () => {
     state.loading = false;
 
     state.total = res.data.limits.total;
-  };
-
-  /**
-   * 初始化处理 产品类别、品牌基础数据
-   */
-  // 递归读取名称
-  const recursionCategory = list => {
-    return list.reduce((pre, cur) => {
-      pre = {
-        ...pre,
-        [cur.id]: cur
-      };
-      if (cur.children) {
-        return {
-          ...pre,
-          ...recursionCategory(cur.children)
-        };
-      }
-      return pre;
-    }, {});
-  };
-  const recursionCategoryAddOptions = list => {
-    return list.reduce((pre, cur) => {
-      pre = [
-        ...pre,
-        {
-          ...cur,
-          label: cur.name,
-          value: cur.id,
-          children: recursionCategoryAddOptions(cur.children || [])
-        }
-      ];
-      return pre;
-    }, []);
   };
 
   const initCategory = async () => {
