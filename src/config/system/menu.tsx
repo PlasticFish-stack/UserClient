@@ -4,11 +4,11 @@ import type {
   PaginationProps
 } from "@pureadmin/table";
 import { delay } from "@pureadmin/utils";
-import { formatGolangDate } from "@/utils/time/date";
 import { reactive, ref } from "vue";
 import type { Menu } from "@/api/menu";
 import { ElPopconfirm } from "element-plus";
 import { useMenuTableStore } from "@/store/modules/customise/menu";
+import { timeRenderContainer } from "@/components/Default/TimeColumns";
 export function useColumns() {
   const menuTableStore = useMenuTableStore();
   const display = ref(false);
@@ -95,10 +95,6 @@ export function useColumns() {
     // zIndex: 100
   };
 
-  const indexMethod = (index: number) => {
-    return index + 1;
-  };
-
   const dataList = ref([]);
   const columns: TableColumnList = [
     // {
@@ -108,52 +104,34 @@ export function useColumns() {
     //   width: 100
     // },
     {
-      type: "index",
-      index: indexMethod
-    },
-    {
       label: "菜单名",
       prop: "name",
       align: "left"
     },
     {
       label: "菜单简介",
-      prop: "description",
-      align: "center",
-      headerAlign: "center"
+      prop: "description"
     },
     {
       label: "菜单标识",
-      prop: "identifier",
-      headerAlign: "center",
-      align: "center"
+      prop: "identifier"
     },
     {
       label: "菜单路径",
       prop: "path",
-      headerAlign: "center",
-      align: "center",
-      cellRenderer: ({ row }) => (
-        <>{row.menu_path == "/null" ? "" : row.menu_path}</>
-      )
+      cellRenderer: ({ row }) => <>{row.path == "/null" ? "" : row.path}</>
     },
     {
       label: "菜单图标",
-      prop: "icon",
-      headerAlign: "center",
-      align: "center"
+      prop: "icon"
     },
     {
       label: "菜单模板",
-      prop: "component",
-      headerAlign: "center",
-      align: "center"
+      prop: "component"
     },
     {
       label: "菜单排序",
       prop: "sort",
-      headerAlign: "center",
-      align: "center",
       width: 100,
       cellRenderer: ({ row }) => (
         <>{row.menu_sort == "0" ? "" : row.menu_sort}</>
@@ -161,9 +139,8 @@ export function useColumns() {
     },
     {
       label: "状态",
-      headerAlign: "center",
       prop: "status",
-      align: "center",
+      headerAlign: "center",
       width: 100,
       cellRenderer: ({ row }) => (
         <el-tag type={row.status ? "success" : "danger"}>
@@ -171,49 +148,11 @@ export function useColumns() {
         </el-tag>
       )
     },
-    {
-      prop: "create_time",
-      width: 180,
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0">
-            {/* <iconify-icon-online icon="ep:timer" /> */}
-          </div>
-          <div>
-            <span>创建时间</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.createTime)}</span>
-        </div>
-      )
-    },
-    {
-      prop: "update_time",
-      width: 180,
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0">
-            {/* <iconify-icon-online icon="ep:timer" /> */}
-          </div>
-          <div>
-            <span>更新时间</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.updateTime)}</span>
-        </div>
-      )
-    },
+    timeRenderContainer("updateTime", "更新时间"),
+    timeRenderContainer("createTime", "创建时间"),
     {
       label: "操作选项",
       prop: "",
-      align: "center",
-      headerAlign: "center",
       width: 260,
       cellRenderer: ({ index, row }) => (
         <>

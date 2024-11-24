@@ -53,7 +53,12 @@ onMounted(async () => {
       :loading="loading"
       :loading-config="loadingConfig"
       :data="data"
-      :columns="columns"
+      :columns="
+        columns.map(item => ({
+          ...item,
+          align: 'left'
+        }))
+      "
       :pagination="pagination"
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"

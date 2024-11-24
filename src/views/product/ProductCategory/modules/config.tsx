@@ -6,13 +6,13 @@ import type {
   PaginationProps
 } from "@pureadmin/table";
 import { ElPopconfirm } from "element-plus";
-import { formatGolangDate } from "@/utils/time/date";
 import { cloneDeep, delay } from "@pureadmin/utils";
 import {
   handleProductCategoryDelete,
   type CategoryFormulasTypes,
   type CategoryTypes
 } from "@/api/productCategory";
+import { timeRenderContainer } from "@/components/Default/TimeColumns";
 
 export function useColumns(categoryRef) {
   const categoryStore = useProductCategoryStore();
@@ -113,40 +113,8 @@ export function useColumns(categoryRef) {
         </>
       )
     },
-    {
-      prop: "createTime",
-      width: 180,
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0"></div>
-          <div>
-            <span>创建时间</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.createTime)}</span>
-        </div>
-      )
-    },
-    {
-      prop: "updateTime",
-      width: 180,
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0"></div>
-          <div>
-            <span>更新时间</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.updateTime)}</span>
-        </div>
-      )
-    },
+    timeRenderContainer("createTime", "创建时间"),
+    timeRenderContainer("updateTime", "更新时间"),
     {
       label: "操作选项",
       prop: "",

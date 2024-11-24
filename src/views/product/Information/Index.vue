@@ -59,6 +59,32 @@ const formColumns: PlusColumn[] = [
     },
     options: computed(() => brandData.value)
   },
+
+  {
+    label: "sku",
+    prop: "sku",
+    valueType: "input"
+  },
+  {
+    label: "spu",
+    prop: "spu",
+    valueType: "input"
+  },
+  {
+    label: "规格",
+    prop: "specifications",
+    valueType: "input"
+  },
+  {
+    label: "海关编码",
+    prop: "barcode",
+    valueType: "input"
+  },
+  {
+    label: "颜色",
+    prop: "color",
+    valueType: "input"
+  },
   {
     label: "创建日期",
     prop: "createTimeRange",
@@ -134,18 +160,20 @@ onMounted(() => {
           gutter: 16
         }"
         :col-props="{
-          span: 8
+          span: 6
         }"
         @submit="handleSubmit"
         @reset="handleReset"
       >
         <template #footer="{ handleSubmit, handleReset }">
-          <div class="flex justify-end pb-4">
+          <div class="flex justify-between pb-4">
             <el-button type="primary" @click="addInformationForm">
               新增产品信息
             </el-button>
-            <el-button type="default" @click="handleReset">重置</el-button>
-            <el-button type="primary" @click="handleSubmit">搜索</el-button>
+            <div class="flex">
+              <el-button type="default" @click="handleReset">重置</el-button>
+              <el-button type="primary" @click="handleSubmit">搜索</el-button>
+            </div>
           </div>
         </template></PlusForm
       >
@@ -162,7 +190,12 @@ onMounted(() => {
       :loading="loading"
       :loading-config="loadingConfig"
       :data="informationData"
-      :columns="columns"
+      :columns="
+        columns.map(item => ({
+          ...item,
+          align: 'left'
+        }))
+      "
       :pagination="pagination"
       @page-size-change="onSizeChange"
       @page-current-change="onCurrentChange"

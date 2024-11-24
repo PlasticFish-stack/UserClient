@@ -130,5 +130,9 @@ provide(starChangeKey, starChange);
   .uptate-currency-warpper {
     margin-bottom: 20px;
   }
+
+  :deep(.el-card) {
+    background-color: rgba(0, 0, 0, 0);
+  }
 }
 </style>

@@ -4,12 +4,12 @@ import type {
   PaginationProps
 } from "@pureadmin/table";
 import { delay } from "@pureadmin/utils";
-import { formatGolangDate } from "@/utils/time/date";
 import { reactive } from "vue";
 import { ElPopconfirm } from "element-plus";
 
 import useBrandStore from "./store";
 import type { BrandTypes } from "@/api/brand";
+import { timeRenderContainer } from "@/components/Default/TimeColumns";
 
 export function useColumns(brandFormRef) {
   const brandStore = useBrandStore();
@@ -48,27 +48,6 @@ export function useColumns(brandFormRef) {
     background: false,
     size: "default"
   });
-
-  const timeRenderContainer = (key: string, title: string): any => {
-    return {
-      prop: key,
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0">
-            {/* <iconify-icon-online icon="ep:timer" /> */}
-          </div>
-          <div>
-            <span>{title}</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row[key])}</span>
-        </div>
-      )
-    };
-  };
 
   const handleEdit = (row: BrandTypes) => {
     brandStore.initCurBrand(row);

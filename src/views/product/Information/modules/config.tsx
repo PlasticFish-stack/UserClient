@@ -4,11 +4,11 @@ import type {
   PaginationProps
 } from "@pureadmin/table";
 import { delay } from "@pureadmin/utils";
-import { formatGolangDate } from "@/utils/time/date";
 import { computed, reactive, watch } from "vue";
 import { ElPopconfirm } from "element-plus";
 import useInformationStore from "./store";
 import type { InformationTypes } from "@/api/information";
+import { timeRenderContainer } from "@/components/Default/TimeColumns";
 
 export function useColumns(informationRef, detailDrawerRef) {
   const informationStore = useInformationStore();
@@ -53,24 +53,6 @@ export function useColumns(informationRef, detailDrawerRef) {
     size: "default"
   });
 
-  const timeRenderContainer = (key: string, title: string): any => {
-    return {
-      prop: key,
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div>
-            <span>{title}</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row[key])}</span>
-        </div>
-      )
-    };
-  };
-
   const handleEdit = (row: InformationTypes) => {
     informationStore.initCurInformation(row);
     informationStore.typeChange("Edit");
@@ -87,10 +69,6 @@ export function useColumns(informationRef, detailDrawerRef) {
   };
 
   const columns = reactive<TableColumnList>([
-    /* {
-      type: "expand",
-      slot: "expand"
-    }, */
     {
       label: "货号",
       prop: "itemNumber",
@@ -141,16 +119,11 @@ export function useColumns(informationRef, detailDrawerRef) {
       prop: "color",
       width: "150px"
     },
-    {
+    /* {
       label: "类型",
       prop: "typeName",
       width: "150px"
-    },
-    {
-      label: "描述",
-      prop: "description",
-      width: "150px"
-    },
+    }, */
     timeRenderContainer("createTime", "创建时间"),
     timeRenderContainer("updateTime", "更新时间"),
     /* {
@@ -209,15 +182,27 @@ export function useColumns(informationRef, detailDrawerRef) {
   function onCurrentChange(val) {
     loadingConfig.text = `正在加载第${val}页...`;
     informationStore.loadingTarget(true);
+    pagination.currentPage = val;
+    informationStore.initInformation({
+      pageNum: val,
+      pageSize: pagination.pageSize
+    });
+
     delay().then(() => {
       informationStore.loadingTarget(false);
     });
     informationStore.loadingTarget(false);
   }
 
-  watch(total, newTotal => {
-    pagination.total = newTotal;
-  });
+  watch(
+    total,
+    newTotal => {
+      pagination.total = newTotal;
+    },
+    {
+      immediate: true
+    }
+  );
 
   return {
     columns,

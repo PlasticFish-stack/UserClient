@@ -5,9 +5,9 @@ import type {
   LoadingConfig,
   PaginationProps
 } from "@pureadmin/table";
-import { formatGolangDate } from "@/utils/time/date";
 import { delay } from "@pureadmin/utils";
 import type { SourceTypes } from "@/api/source";
+import { timeRenderContainer } from "@/components/Default/TimeColumns";
 
 export function useColumns() {
   const sourceStore = useSourceStore();
@@ -51,24 +51,6 @@ export function useColumns() {
     background: false,
     size: "default"
   });
-
-  const timeRenderContainer = (key: string, title: string): any => {
-    return {
-      prop: key,
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div>
-            <span>{title}</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row[key])}</span>
-        </div>
-      )
-    };
-  };
 
   const handleEdit = (row: SourceTypes) => {
     console.log("============", row);
