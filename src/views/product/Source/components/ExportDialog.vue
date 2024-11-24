@@ -4,8 +4,10 @@ import {
   PlusStepsForm,
   PlusCheckCardGroup
 } from "plus-pro-components";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watchEffect } from "vue";
 import useSourceStore from "../modules/store";
+import "plus-pro-components/index.css";
+import CardSelect from "./cardSelect.vue";
 
 const sourceStore = useSourceStore();
 
@@ -17,24 +19,9 @@ const state = reactive({
 const categoryData = computed(() => sourceStore.$state.state.categoryData);
 const brandData = computed(() => sourceStore.$state.state.brandData);
 
-const form = ref(null);
-
-const options = [
-  {
-    title: "title0",
-    value: "0",
-    description: "description0",
-    avatar:
-      "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-  },
-  {
-    title: "title1",
-    value: "1",
-    description: "description1",
-    avatar:
-      "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg"
-  }
-];
+const form = ref({
+  searchCurrencyName: ""
+});
 
 const stepForm = ref<PlusStepFromRow[]>([
   {
@@ -90,12 +77,18 @@ const stepForm = ref<PlusStepFromRow[]>([
     form: {
       labelWidth: "100",
       modelValue: {},
+      footerAlign: "right",
       columns: [
         {
+          label: "搜索货币",
+          prop: "searchCurrencyName",
+          valueType: "input"
+        },
+        {
           label: "货币",
-          prop: "name",
+          prop: "currencyName",
           renderField: () => {
-            return <PlusCheckCardGroup options={options} size="small" />;
+            return <CardSelect keyword={form.value.searchCurrencyName} />;
           }
         }
       ],
@@ -112,9 +105,14 @@ const open = () => {
   state.visible = true;
 };
 
-const next = (actives: number, values: any) => {
+const next = (actives: number) => {
   state.active = actives;
-  console.log(state.active, values, form.value);
+};
+const handleChange = values => {
+  form.value = {
+    ...form.value,
+    ...values
+  };
 };
 
 defineExpose({
@@ -135,6 +133,7 @@ defineExpose({
       next-text="下一步"
       submit-text="确定"
       :data="stepForm"
+      @change="handleChange"
       @next="next"
     />
   </el-dialog>

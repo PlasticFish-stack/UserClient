@@ -9,7 +9,8 @@ import type { Menu } from "@/api/menu";
 import { ElPopconfirm } from "element-plus";
 import { useMenuTableStore } from "@/store/modules/customise/menu";
 import { timeRenderContainer } from "@/components/Default/TimeColumns";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import Icon from "@/components/ReIcon/src/Icon.vue";
+
 export function useColumns() {
   const menuTableStore = useMenuTableStore();
   const display = ref(false);
@@ -125,7 +126,9 @@ export function useColumns() {
     {
       label: "菜单图标",
       prop: "icon",
-      cellRenderer: ({ row }) => <>{row.icon ? useRenderIcon(row.icon) : "-"}</>
+      cellRenderer: ({ row }) => (
+        <>{row.icon ? <Icon extraIcon={row.icon} /> : "-"}</>
+      )
     },
     {
       label: "菜单模板",
