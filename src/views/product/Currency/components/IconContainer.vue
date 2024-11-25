@@ -9,6 +9,7 @@ import {
   StarChangeFunction,
   starChangeKey
 } from "../CoreModules/types";
+import pinyin from "pinyin";
 
 type Props = {
   data: CurrencyTypes[];
@@ -30,6 +31,14 @@ watch(
     regionItem.value = reformatRegionItem(data);
   }
 );
+
+const getKeyPinyin = key => {
+  const pinyinArray = pinyin(key, {
+    style: pinyin.STYLE_NORMAL // 普通风格，不带声调
+  });
+  return pinyinArray[0][0]; // 获取第一个拼音字符
+};
+
 function reformatRegionItem(data: CurrencyTypes[]) {
   const res = {};
   data.forEach(item => {
@@ -50,7 +59,24 @@ function reformatRegionItem(data: CurrencyTypes[]) {
   Object.keys(res).forEach(org => {
     res[org].sort((a, b) => a.id - b.id); // 假设 id 是数字类型
   });
-  return res;
+  const sortedKeys = Object.keys(res).sort((a, b) => {
+    const pinyinA = getKeyPinyin(a);
+    const pinyinB = getKeyPinyin(b);
+
+    if (pinyinA < pinyinB) {
+      return -1;
+    }
+    if (pinyinA > pinyinB) {
+      return 1;
+    }
+    return 0;
+  });
+
+  const sortedObj = {};
+  sortedKeys.forEach(key => {
+    sortedObj[key] = res[key];
+  });
+  return sortedObj;
 }
 const editCurrency = inject(editCurrencyKey) as
   | EditCurrencyFunction
@@ -65,9 +91,7 @@ const handleStar = row => {
   starChange && starChange(row);
 };
 onBeforeMount(() => {
-  console.log("123");
   regionItem.value = reformatRegionItem(props.data);
-  console.log(props.data, "1data");
 });
 </script>
 

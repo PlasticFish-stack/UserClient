@@ -1,10 +1,10 @@
 <script setup lang="tsx">
 import { type PlusStepFromRow, PlusStepsForm } from "plus-pro-components";
-import { computed, reactive, ref } from "vue";
+import { computed, markRaw, reactive, ref, shallowRef } from "vue";
 import useSourceStore from "../modules/store";
 import "plus-pro-components/index.css";
 import CardSelect from "./cardSelect.vue";
-import { downloadExortDemo, getExport } from "@/api/source";
+import { downloadExortDemo } from "@/api/source";
 import { errorMes, successMes } from "@/utils/globalReqMes";
 import { cloneDeep } from "@pureadmin/utils";
 import { SuccessFilled } from "@element-plus/icons-vue";
@@ -12,8 +12,8 @@ import { getKeyParams } from "@/utils/globalUtils";
 
 const defaultForm = {
   searchCurrencyName: "",
-  typeId: "",
-  brandId: "",
+  productTypeId: "",
+  productBrandId: "",
   currencyName: ""
 };
 
@@ -30,7 +30,9 @@ const brandData = computed(() => sourceStore.$state.state.brandData);
 
 const form = ref(cloneDeep(defaultForm));
 
-const stepForm = ref<PlusStepFromRow[]>([
+const CardContiner = markRaw(CardSelect);
+
+const stepForm = shallowRef<PlusStepFromRow[]>([
   {
     title: "第一步",
     form: {
@@ -40,7 +42,7 @@ const stepForm = ref<PlusStepFromRow[]>([
       columns: [
         {
           label: "类别",
-          prop: "typeId",
+          prop: "productTypeId",
           valueType: "tree-select",
           fieldProps: {
             data: computed(() => categoryData.value),
@@ -56,7 +58,7 @@ const stepForm = ref<PlusStepFromRow[]>([
         },
         {
           label: "品牌",
-          prop: "brandId",
+          prop: "productBrandId",
           valueType: "select",
           fieldProps: {
             clearable: true
@@ -65,13 +67,13 @@ const stepForm = ref<PlusStepFromRow[]>([
         }
       ],
       rules: {
-        typeId: [
+        productTypeId: [
           {
             required: true,
             message: "请选择类别"
           }
         ],
-        brandId: [
+        productBrandId: [
           {
             required: true,
             message: "请选择品牌"
@@ -98,7 +100,7 @@ const stepForm = ref<PlusStepFromRow[]>([
           prop: "currencyName",
           renderField: (value, onChange) => {
             return (
-              <CardSelect
+              <CardContiner
                 keyword={form.value.searchCurrencyName}
                 modelValue={value}
                 onChange={onChange}
@@ -132,7 +134,11 @@ const stepForm = ref<PlusStepFromRow[]>([
 ]);
 
 const handleCalcel = () => {
-  form.value = cloneDeep(defaultForm);
+  form.value = {
+    ...cloneDeep(defaultForm)
+  };
+  state.active = 1;
+
   state.visible = false;
 };
 
@@ -140,13 +146,18 @@ const open = () => {
   state.visible = true;
 };
 
-const next = async (actives: number, values: any) => {
+const next = async (actives: number) => {
   if (actives === 3) {
     state.loading = true;
     try {
       const res: any = await downloadExortDemo(
-        getKeyParams(form.value, ["typeId", "brandId", "currencyName"])
+        getKeyParams(form.value, [
+          "productTypeId",
+          "productBrandId",
+          "currencyName"
+        ])
       );
+
       if (res) {
         state.active = actives;
         successMes("导出成功!");
@@ -155,9 +166,9 @@ const next = async (actives: number, values: any) => {
       } else {
         state.active = 2;
         state.loading = false;
-        errorMes("导出失败!");
       }
     } catch (e) {
+      state.active = 2;
       state.loading = false;
     }
   } else {
@@ -181,6 +192,7 @@ defineExpose({
     v-model="state.visible"
     title="导出"
     width="800"
+    destroy-on-close
     :close-on-click-modal="false"
     :close="handleCalcel"
   >

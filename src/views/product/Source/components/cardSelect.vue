@@ -93,7 +93,7 @@ onMounted(() => {
         <h3>收藏</h3>
       </div>
     </template>
-    <el-scrollbar height="240px">
+    <el-scrollbar height="120px">
       <div class="flex items-center gap-[8px] flex-wrap overflow-auto">
         <Card
           :data="starCurrencyData"
@@ -106,7 +106,7 @@ onMounted(() => {
 
   <!-- 未收藏 -->
   <div class="overflow-hidden">
-    <el-scrollbar height="400px">
+    <el-scrollbar height="200px">
       <div class="flex items-center gap-[8px] flex-wrap overflow-auto">
         <Card
           :data="currencyData"

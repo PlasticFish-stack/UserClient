@@ -3,7 +3,7 @@ import type {
   LoadingConfig,
   PaginationProps
 } from "@pureadmin/table";
-import { delay } from "@pureadmin/utils";
+import { cloneDeep, delay } from "@pureadmin/utils";
 import { computed, reactive, watch } from "vue";
 import { ElPopconfirm } from "element-plus";
 import useInformationStore from "./store";
@@ -54,7 +54,7 @@ export function useColumns(informationRef, detailDrawerRef) {
   });
 
   const handleEdit = (row: InformationTypes) => {
-    informationStore.initCurInformation(row);
+    informationStore.initCurInformation(cloneDeep(row));
     informationStore.typeChange("Edit");
     detailDrawerRef.value?.open();
   };

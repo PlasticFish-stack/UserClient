@@ -30,7 +30,7 @@ const columns = ref<PlusColumn[]>([
     valueType: "copy"
   },
   {
-    label: "类别",
+    label: "昵称",
     prop: "description",
     valueType: "input"
   }
@@ -48,7 +48,7 @@ const rules = reactive<FormRules>({
     {
       required: true,
       trigger: "blur",
-      message: "请输入类别"
+      message: "请输入昵称"
     }
   ]
 });
