@@ -17,7 +17,21 @@ interface stateProps {
   };
   confirmLoading: boolean;
 }
-
+const region = [
+  { value: "亚洲", label: "亚洲" },
+  { value: "中东", label: "中东" },
+  { value: "北非", label: "北非" },
+  { value: "西非", label: "西非" },
+  { value: "中非", label: "中非" },
+  { value: "南非", label: "南非" },
+  { value: "东非", label: "东非" },
+  { value: "北美", label: "北美" },
+  { value: "中美", label: "中美" },
+  { value: "南美", label: "南美" },
+  { value: "加勒比", label: "加勒比" },
+  { value: "欧洲", label: "欧洲" },
+  { value: "大洋洲", label: "大洋洲" }
+];
 const columns: PlusColumn[] = [
   {
     label: "货币名称",
@@ -35,6 +49,17 @@ const columns: PlusColumn[] = [
   {
     label: "英文描述",
     prop: "descriptionEn",
+    valueType: "input"
+  },
+  {
+    label: "使用地区",
+    prop: "organization",
+    valueType: "select",
+    options: region
+  },
+  {
+    label: "发行地",
+    prop: "country",
     valueType: "input"
   },
   {
@@ -59,6 +84,8 @@ const defaultState: stateProps = {
     descriptionEn: "",
     descriptionCn: "",
     countryIcon: "",
+    country: "",
+    organization: "",
     sort: 0
   },
   confirmLoading: false
@@ -93,12 +120,22 @@ const handleConfirm = async () => {
 
 const open = () => {
   const row = currencyStore.$state.store.rowData;
-  const { currencyName, countryIcon, descriptionCn, descriptionEn, sort } = row;
+  const {
+    currencyName,
+    countryIcon,
+    descriptionCn,
+    descriptionEn,
+    sort,
+    country,
+    organization
+  } = row;
   state.form = {
     currencyName,
     countryIcon,
     descriptionCn,
     descriptionEn,
+    organization,
+    country,
     sort
   };
 

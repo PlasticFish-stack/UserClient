@@ -152,7 +152,7 @@ export function useColumns(informationRef, detailDrawerRef) {
           </el-button>
           <ElPopconfirm
             width="220"
-            title="是否要删除该用户"
+            title="是否要删除该产品"
             confirm-button-text="删除"
             cancel-button-text="返回"
             confirmButtonType="danger"

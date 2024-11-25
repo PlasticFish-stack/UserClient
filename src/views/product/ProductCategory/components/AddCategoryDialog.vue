@@ -134,6 +134,8 @@ const open = (curRow: any) => {
   rows.fields = addKey(rows.fields);
 
   state.form = rows;
+  console.log(state.form);
+
   state.upCategorys = [
     {
       id: 0,

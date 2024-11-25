@@ -56,10 +56,15 @@ const currencyData = computed(() => {
   return data.filter(c => !state.stars[c.id]);
 });
 const starCurrencyData = computed(() => {
+  console.log("true");
+
   const data = currencyStore.$state.store.currencyData;
   const checkStars = data
     .flatMap(item => (state.stars[item.id] ? [item] : []))
     .sort((a, b) => a.sort - b.sort);
+
+  console.log(checkStars, "start");
+
   return checkStars;
 });
 
@@ -117,7 +122,6 @@ provide(starChangeKey, starChange);
       </template>
       <IconContainer :data="starCurrencyData" :stars="state.stars" />
     </el-card>
-
     <IconContainer :data="currencyData" :stars="state.stars" />
     <CurrencyDialog ref="currencyDiaRef" />
   </div>
