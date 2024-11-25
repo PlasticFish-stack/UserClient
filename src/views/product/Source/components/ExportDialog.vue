@@ -1,10 +1,6 @@
 <script setup lang="tsx">
-import {
-  type PlusStepFromRow,
-  PlusStepsForm,
-  PlusCheckCardGroup
-} from "plus-pro-components";
-import { computed, reactive, ref, watchEffect } from "vue";
+import { type PlusStepFromRow, PlusStepsForm } from "plus-pro-components";
+import { computed, reactive, ref } from "vue";
 import useSourceStore from "../modules/store";
 import "plus-pro-components/index.css";
 import CardSelect from "./cardSelect.vue";
@@ -20,14 +16,18 @@ const categoryData = computed(() => sourceStore.$state.state.categoryData);
 const brandData = computed(() => sourceStore.$state.state.brandData);
 
 const form = ref({
-  searchCurrencyName: ""
+  searchCurrencyName: "",
+  typeId: "",
+  brandId: "",
+  currencyName: ""
 });
 
 const stepForm = ref<PlusStepFromRow[]>([
   {
     title: "第一步",
     form: {
-      modelValue: {},
+      modelValue: form.value,
+      defaultValues: form.value,
       footerAlign: "right",
       columns: [
         {
@@ -76,7 +76,8 @@ const stepForm = ref<PlusStepFromRow[]>([
     title: "第二步",
     form: {
       labelWidth: "100",
-      modelValue: {},
+      modelValue: form.value,
+      defaultValues: form.value,
       footerAlign: "right",
       columns: [
         {
@@ -87,12 +88,30 @@ const stepForm = ref<PlusStepFromRow[]>([
         {
           label: "货币",
           prop: "currencyName",
-          renderField: () => {
-            return <CardSelect keyword={form.value.searchCurrencyName} />;
+          renderField: (value, onChange) => {
+            return (
+              <CardSelect
+                keyword={form.value.searchCurrencyName}
+                modelValue={value}
+                onChange={onChange}
+              />
+            );
           }
         }
       ],
-      rules: {}
+      rules: {
+        currencyName: [
+          {
+            required: true,
+            // 写着玩的校验
+            validator: (rule: any, value: any, callback: any) => {
+              if (!value) {
+                return callback(new Error("请选择货币"));
+              }
+            }
+          }
+        ]
+      }
     }
   }
 ]);
@@ -105,8 +124,12 @@ const open = () => {
   state.visible = true;
 };
 
-const next = (actives: number) => {
+const next = (actives: number, values: any) => {
   state.active = actives;
+  console.log("============", {
+    actives,
+    values
+  });
 };
 const handleChange = values => {
   form.value = {
@@ -125,6 +148,7 @@ defineExpose({
     v-model="state.visible"
     title="导出"
     width="800"
+    :close-on-click-modal="false"
     :close="handleCalcel"
   >
     <PlusStepsForm
