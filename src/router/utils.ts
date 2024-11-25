@@ -342,7 +342,6 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
       addAsyncRoutes(v.children);
     }
   });
-  console.log(arrRoutes, "why");
   return arrRoutes;
 }
 

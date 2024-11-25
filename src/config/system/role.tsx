@@ -4,11 +4,11 @@ import type {
   PaginationProps
 } from "@pureadmin/table";
 import { delay } from "@pureadmin/utils";
-import { formatGolangDate } from "@/utils/time/date";
 import { reactive, ref } from "vue";
 import type { Role } from "@/api/role";
 import { ElPopconfirm } from "element-plus";
 import { useRoleTableStore } from "@/store/modules/customise/role";
+import { timeRenderContainer } from "@/components/Default/TimeColumns";
 export function useColumns() {
   const roleTableStore = useRoleTableStore();
   const display = ref(false);
@@ -92,43 +92,8 @@ export function useColumns() {
         </el-tag>
       )
     },
-    {
-      prop: "create_time",
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0">
-            {/* <iconify-icon-online icon="ep:timer" /> */}
-          </div>
-          <div>
-            <span>创建时间</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.createTime)}</span>
-        </div>
-      )
-    },
-    {
-      label: "更新时间",
-      prop: "update_time",
-      headerRenderer: () => (
-        <div style="display: flex; justify-content: center; align-items: center;position: relative;">
-          <div style="position: absolute; left:0">
-            {/* <iconify-icon-online icon="ep:timer" /> */}
-          </div>
-          <div>
-            <span>更新时间</span>
-          </div>
-        </div>
-      ),
-      cellRenderer: ({ row }) => (
-        <div style="display: flex; justify-content: center;align-items: center">
-          <span>{formatGolangDate(row.updateTime)}</span>
-        </div>
-      )
-    },
+    timeRenderContainer("updateTime", "更新时间"),
+    timeRenderContainer("createTime", "创建时间"),
     {
       label: "操作选项",
       prop: "",
@@ -138,6 +103,7 @@ export function useColumns() {
             type="primary"
             size="small"
             onClick={() => handleEdit(index + 1, row)}
+            link
           >
             编辑
           </el-button>
@@ -145,6 +111,7 @@ export function useColumns() {
             type="success"
             size="small"
             onClick={() => handleBingMenu(row)}
+            link
           >
             绑定
           </el-button>
@@ -157,7 +124,7 @@ export function useColumns() {
             onConfirm={() => handleDelete(index + 1, row)}
             v-slots={{
               reference: () => (
-                <el-button type="danger" size="small">
+                <el-button type="danger" size="small" link>
                   {" "}
                   删除
                 </el-button>

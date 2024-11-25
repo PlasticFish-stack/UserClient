@@ -47,6 +47,7 @@
     "url": "https://github.com/xiaoxian521"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@pureadmin/descriptions": "^1.2.1",
     "@pureadmin/table": "^3.2.0",
     "@pureadmin/utils": "^2.4.8",
@@ -57,6 +58,7 @@
     "dayjs": "^1.11.12",
     "echarts": "^5.5.1",
     "element-plus": "^2.8.0",
+    "flag-icons": "^7.2.3",
     "js-cookie": "^3.0.5",
     "localforage": "^1.10.0",
     "mitt": "^3.0.1",
