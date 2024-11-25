@@ -4,23 +4,31 @@ import { computed, reactive, ref } from "vue";
 import useSourceStore from "../modules/store";
 import "plus-pro-components/index.css";
 import CardSelect from "./cardSelect.vue";
+import { downloadExortDemo, getExport } from "@/api/source";
+import { errorMes, successMes } from "@/utils/globalReqMes";
+import { cloneDeep } from "@pureadmin/utils";
+import { SuccessFilled } from "@element-plus/icons-vue";
+import { getKeyParams } from "@/utils/globalUtils";
+
+const defaultForm = {
+  searchCurrencyName: "",
+  typeId: "",
+  brandId: "",
+  currencyName: ""
+};
 
 const sourceStore = useSourceStore();
 
 const state = reactive({
   visible: false,
-  active: 1
+  active: 1,
+  loading: false
 });
 
 const categoryData = computed(() => sourceStore.$state.state.categoryData);
 const brandData = computed(() => sourceStore.$state.state.brandData);
 
-const form = ref({
-  searchCurrencyName: "",
-  typeId: "",
-  brandId: "",
-  currencyName: ""
-});
+const form = ref(cloneDeep(defaultForm));
 
 const stepForm = ref<PlusStepFromRow[]>([
   {
@@ -103,20 +111,28 @@ const stepForm = ref<PlusStepFromRow[]>([
         currencyName: [
           {
             required: true,
+            // message: "请选择货币",
             // 写着玩的校验
             validator: (rule: any, value: any, callback: any) => {
               if (!value) {
                 return callback(new Error("请选择货币"));
               }
+              callback();
             }
           }
         ]
       }
     }
+  },
+  {
+    title: "完成",
+    icon: SuccessFilled,
+    form: {}
   }
 ]);
 
 const handleCalcel = () => {
+  form.value = cloneDeep(defaultForm);
   state.visible = false;
 };
 
@@ -124,12 +140,29 @@ const open = () => {
   state.visible = true;
 };
 
-const next = (actives: number, values: any) => {
-  state.active = actives;
-  console.log("============", {
-    actives,
-    values
-  });
+const next = async (actives: number, values: any) => {
+  if (actives === 3) {
+    state.loading = true;
+    try {
+      const res: any = await downloadExortDemo(
+        getKeyParams(form.value, ["typeId", "brandId", "currencyName"])
+      );
+      if (res) {
+        state.active = actives;
+        successMes("导出成功!");
+        handleCalcel();
+        state.loading = false;
+      } else {
+        state.active = 2;
+        state.loading = false;
+        errorMes("导出失败!");
+      }
+    } catch (e) {
+      state.loading = false;
+    }
+  } else {
+    state.active = actives;
+  }
 };
 const handleChange = values => {
   form.value = {
@@ -153,6 +186,7 @@ defineExpose({
   >
     <PlusStepsForm
       v-model="state.active"
+      v-loading="state.loading"
       pre-text="上一步"
       next-text="下一步"
       submit-text="确定"

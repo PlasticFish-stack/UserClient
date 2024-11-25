@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, watchEffect } from "vue";
+import { computed, onMounted, reactive } from "vue";
 import useSourceStore from "../modules/store";
 import { cloneDeep } from "@pureadmin/utils";
 
@@ -34,7 +34,10 @@ const sourceStore = useSourceStore();
 const state = reactive(cloneDeep(defaultState));
 
 const checkWord = (item, key) => {
-  return item[key].toLocaleLowerCase().indexOf(props.keyword) >= 0;
+  return (
+    item[key].toLocaleLowerCase().indexOf(props.keyword.toLocaleLowerCase()) >=
+    0
+  );
 };
 
 const checkKeyword = data => {
@@ -42,7 +45,6 @@ const checkKeyword = data => {
     let checkCurrencyName = checkWord(item, "currencyName");
     let checkDescriptionCn = checkWord(item, "descriptionCn");
     let checkDescriptionEn = checkWord(item, "descriptionEn");
-
     return checkCurrencyName || checkDescriptionCn || checkDescriptionEn;
   });
 };
@@ -58,7 +60,6 @@ const currencyData = computed(() => {
   if (props.keyword) {
     data = checkKeyword(data);
   }
-  // console.log("==========", data);
   return data;
 });
 
@@ -74,10 +75,6 @@ const starCurrencyData = computed(() => {
     checkStars = checkKeyword(checkStars);
   }
   return checkStars;
-});
-
-watchEffect(() => {
-  // console.log("currencyData==========", currencyData.value);
 });
 
 onMounted(() => {
@@ -108,15 +105,17 @@ onMounted(() => {
   </el-card>
 
   <!-- 未收藏 -->
-  <el-scrollbar height="400px">
-    <div class="flex items-center gap-[8px] flex-wrap overflow-auto">
-      <Card
-        :data="currencyData"
-        :model-value="props.modelValue"
-        :onChange="props.onChange"
-      />
-    </div>
-  </el-scrollbar>
+  <div class="overflow-hidden">
+    <el-scrollbar height="400px">
+      <div class="flex items-center gap-[8px] flex-wrap overflow-auto">
+        <Card
+          :data="currencyData"
+          :model-value="props.modelValue"
+          :onChange="props.onChange"
+        />
+      </div>
+    </el-scrollbar>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -126,7 +125,7 @@ onMounted(() => {
   gap: 10px;
   padding: 10px;
   .plus-check-card--default {
-    width: 310px;
+    width: 306px;
     height: 110px;
   }
 }

@@ -2,7 +2,7 @@
 import type { CurrencyTypes } from "@/api/currency";
 import { PlusCheckCardGroup } from "plus-pro-components";
 import Icon from "@/views/product/Currency/components/Icon.vue";
-import { computed, reactive, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { cloneDeep } from "@pureadmin/utils";
 
 interface Props {
@@ -17,14 +17,24 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const currencyData = ref<any>([]);
-const modelValue = computed(() => props.modelValue);
+const modelValue = ref(props.modelValue);
 
 const handleChange = val => {
   props.onChange && props.onChange(val);
 };
 
 watch(
-  props.data,
+  () => props.modelValue,
+  val => {
+    modelValue.value = val;
+  },
+  {
+    immediate: true
+  }
+);
+
+watch(
+  () => props.data,
   renderData => {
     const data = cloneDeep(renderData);
     currencyData.value = data.map(item => {
