@@ -1,6 +1,6 @@
 {
   "Version": "5.8.0",
-  "Title": "雅江CCS查询平台",
+  "Title": "产品",
   "FixedHeader": true,
   "HiddenSideBar": false,
   "MultiTagsCache": false,
@@ -19,7 +19,7 @@
   "ShowLogo": true,
   "ShowModel": "smart",
   "MenuArrowIconNoTransition": false,
-  "CachingAsyncRoutes": false,
+  "CachingAsyncRoutes": true,
   "TooltipEffect": "light",
   "ResponsiveStorageNameSpace": "responsive-",
   "MenuSearchHistory": 6

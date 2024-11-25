@@ -8,6 +8,8 @@ export type CurrencyTypes = {
   apiUpdateTime: Date;
   countryIcon: string;
   currencyName: string;
+  country: string;
+  organization: string;
   descriptionCn: string;
   descriptionEn: string;
   ProductCost: string;
