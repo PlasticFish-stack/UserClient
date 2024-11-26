@@ -30,11 +30,6 @@ onMounted(async () => {
     pageNum,
     pageSize
   });
-  /* const res = await getExport({
-    currencyName: "CNY",
-    productTypeId: 3,
-    productBrandId: 3
-  }); */
 });
 </script>
 

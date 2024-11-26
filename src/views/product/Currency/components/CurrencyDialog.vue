@@ -66,15 +66,15 @@ const columns: PlusColumn[] = [
     label: "货币简称",
     prop: "countryIcon",
     valueType: "input"
-  },
-  {
+  }
+  /* {
     label: "排序",
     prop: "sort",
     valueType: "input-number",
     fieldProps: {
       min: 0
     }
-  }
+  } */
 ];
 
 const defaultState: stateProps = {

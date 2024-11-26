@@ -3,7 +3,7 @@ import type {
   LoadingConfig,
   PaginationProps
 } from "@pureadmin/table";
-import { delay } from "@pureadmin/utils";
+import { cloneDeep, delay } from "@pureadmin/utils";
 import { reactive } from "vue";
 import { ElPopconfirm } from "element-plus";
 
@@ -50,7 +50,7 @@ export function useColumns(brandFormRef) {
   });
 
   const handleEdit = (row: BrandTypes) => {
-    brandStore.initCurBrand(row);
+    brandStore.initCurBrand(cloneDeep(row));
     brandStore.typeChange("Edit");
     brandFormRef.value?.open();
   };

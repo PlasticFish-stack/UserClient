@@ -7,11 +7,16 @@ import Card from "./card.vue";
 
 interface Props {
   keyword: string;
+  modelValue: any;
+  onChange: (val: any) => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  keyword: ""
+  keyword: "",
+  modelValue: ""
 });
+
+const emit = defineEmits(["update:modelValue"]);
 
 interface stateProps {
   stars: {
@@ -28,20 +33,47 @@ const defaultState: stateProps = {
 const sourceStore = useSourceStore();
 const state = reactive(cloneDeep(defaultState));
 
+const checkWord = (item, key) => {
+  return (
+    item[key].toLocaleLowerCase().indexOf(props.keyword.toLocaleLowerCase()) >=
+    0
+  );
+};
+
+const checkKeyword = data => {
+  return data.filter(item => {
+    let checkCurrencyName = checkWord(item, "currencyName");
+    let checkDescriptionCn = checkWord(item, "descriptionCn");
+    let checkDescriptionEn = checkWord(item, "descriptionEn");
+    return checkCurrencyName || checkDescriptionCn || checkDescriptionEn;
+  });
+};
+
 /* 未收藏货币 */
 const currencyData = computed(() => {
-  const data = sourceStore.$state.state.currencyData;
-  return data
+  let data = sourceStore.$state.state.currencyData;
+
+  data = data
     .filter(c => !state.stars[c.id])
     .sort((a, b) => (b.countryIcon ? 1 : 0) - (a.countryIcon ? 1 : 0));
+
+  if (props.keyword) {
+    data = checkKeyword(data);
+  }
+  return data;
 });
 
 /* 收藏货币 */
 const starCurrencyData = computed(() => {
   const data = sourceStore.$state.state.currencyData;
-  const checkStars = data
+
+  let checkStars = data
     .flatMap(item => (state.stars[item.id] ? [item] : []))
     .sort((a, b) => a.sort - b.sort);
+
+  if (props.keyword) {
+    checkStars = checkKeyword(checkStars);
+  }
   return checkStars;
 });
 
@@ -61,20 +93,28 @@ onMounted(() => {
         <h3>收藏</h3>
       </div>
     </template>
-    <div
-      class="flex items-center gap-[8px] flex-wrap overflow-auto"
-      style="max-height: 240px"
-    >
-      <Card :data="starCurrencyData" />
-    </div>
+    <el-scrollbar height="120px">
+      <div class="flex items-center gap-[8px] flex-wrap overflow-auto">
+        <Card
+          :data="starCurrencyData"
+          :model-value="props.modelValue"
+          :onChange="props.onChange"
+        />
+      </div>
+    </el-scrollbar>
   </el-card>
 
   <!-- 未收藏 -->
-  <div
-    class="flex items-center gap-[8px] flex-wrap overflow-auto"
-    style="max-height: 400px"
-  >
-    <Card :data="currencyData" />
+  <div class="overflow-hidden">
+    <el-scrollbar height="200px">
+      <div class="flex items-center gap-[8px] flex-wrap overflow-auto">
+        <Card
+          :data="currencyData"
+          :model-value="props.modelValue"
+          :onChange="props.onChange"
+        />
+      </div>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -85,13 +125,17 @@ onMounted(() => {
   gap: 10px;
   padding: 10px;
   .plus-check-card--default {
-    width: 310px;
+    width: 306px;
     height: 110px;
   }
 }
 
 :deep(.el-card__header) {
   padding: 10px;
+}
+:deep(.plus-check-card--default) {
+  width: 310px;
+  height: 110px;
 }
 
 .svg-container {
