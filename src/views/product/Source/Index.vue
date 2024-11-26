@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import ExportDialog from "./components/ExportDialog.vue";
 import useSourceStore from "./modules/store";
 import { useColumns } from "./modules/config";
+import ImportDialog from "./components/ImportDialog.vue";
 
 const sourceStore = useSourceStore();
 
@@ -16,12 +17,16 @@ const {
 } = useColumns();
 
 const exportRef = ref(null);
+const importRef = ref(null);
 
 const data = computed(() => sourceStore.$state.state.data);
 const loading = computed(() => sourceStore.$state.state.loading);
 
 const handleExport = () => {
   exportRef.value.open();
+};
+const handleImport = () => {
+  importRef.value.open();
 };
 
 onMounted(async () => {
@@ -36,6 +41,9 @@ onMounted(async () => {
 <template>
   <div class="main">
     <el-button class="mb-2" @click="handleExport">导出模板</el-button>
+    <el-button class="mb-2" type="primary" @click="handleImport"
+      >导入成本价表</el-button
+    >
 
     <pure-table
       ref="tableRef"
@@ -59,6 +67,7 @@ onMounted(async () => {
       @page-current-change="onCurrentChange"
     />
     <ExportDialog ref="exportRef" />
+    <ImportDialog ref="importRef" />
   </div>
 </template>
 

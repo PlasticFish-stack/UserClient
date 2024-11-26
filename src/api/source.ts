@@ -66,3 +66,12 @@ export const downloadExortDemo = async data => {
 export const getExport = params => {
   return http.request<SourceResult>("get", "/excel/getlimits", { params });
 };
+
+export const upFile = data => {
+  return http.request("post", "/excel/check", {
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+};
