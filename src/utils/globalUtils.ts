@@ -50,3 +50,29 @@ export const recursionCategoryAddOptions = list => {
     return pre;
   }, []);
 };
+
+// 递归抽取数组同一项
+export const recursionAryData = (data: any[]) => {
+  try {
+    const keys = Object.keys(data[0]).reduce((pre, key) => {
+      return {
+        ...pre,
+        [key]: []
+      };
+    }, {});
+
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+
+      Object.keys(item).forEach(k => {
+        if (item[k]) {
+          keys[k].push(item[k]);
+        }
+      });
+    }
+
+    return keys;
+  } catch (e) {
+    return {};
+  }
+};

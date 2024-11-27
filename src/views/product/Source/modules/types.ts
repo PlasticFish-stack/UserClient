@@ -18,3 +18,7 @@ export type StateProps = {
   };
   currencyData: CurrencyTypes[];
 };
+
+export enum FileType {
+  XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+}

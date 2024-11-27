@@ -26,6 +26,24 @@ export type SourceReqResult = {
   data: string;
 };
 
+export type FileReqResult = {
+  success: boolean;
+  data: {
+    configParam: {
+      bookName: string;
+      currencyName: string;
+      productBrandId: string;
+      productBrandName: string;
+      productTypeId: string;
+      productTypeName: string;
+      rate: string;
+    };
+    excelData: Array<{
+      [key: string]: any;
+    }>;
+  };
+};
+
 /* 获取模板 */
 export const downloadExortDemo = async data => {
   try {
@@ -68,10 +86,16 @@ export const getExport = params => {
 };
 
 export const upFile = data => {
-  return http.request("post", "/excel/check", {
+  return http.request<FileReqResult>("post", "/excel/check", {
     data,
     headers: {
       "Content-Type": "multipart/form-data"
     }
+  });
+};
+
+export const importFile = data => {
+  return http.request<FileReqResult>("post", "/excel/import", {
+    data
   });
 };
