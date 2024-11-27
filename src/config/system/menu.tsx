@@ -126,6 +126,8 @@ export function useColumns() {
     {
       label: "菜单图标",
       prop: "icon",
+      headerAlign: "center",
+      width: 100,
       cellRenderer: ({ row }) => (
         <>{row.icon ? <Icon extraIcon={row.icon} /> : "-"}</>
       )
@@ -134,23 +136,25 @@ export function useColumns() {
       label: "菜单模板",
       prop: "component"
     },
-    {
-      label: "菜单排序",
-      prop: "sort",
-      width: 100,
-      cellRenderer: ({ row }) => (
-        <>{row.menu_sort == "0" ? "" : row.menu_sort}</>
-      )
-    },
+    // {
+    //   label: "菜单排序",
+    //   prop: "sort",
+    //   width: 100,
+    //   cellRenderer: ({ row }) => (
+    //     <>{row.menu_sort == "0" ? "" : row.menu_sort}</>
+    //   )
+    // },
     {
       label: "状态",
       prop: "status",
       headerAlign: "center",
       width: 100,
       cellRenderer: ({ row }) => (
-        <el-tag type={row.status ? "success" : "danger"}>
-          {row.status ? "生效" : "失效"}
-        </el-tag>
+        <div class="flex justify-center items-center">
+          <el-tag type={row.status ? "success" : "danger"}>
+            {row.status ? "生效" : "失效"}
+          </el-tag>
+        </div>
       )
     },
     timeRenderContainer("updateTime", "更新时间"),
@@ -159,11 +163,13 @@ export function useColumns() {
       label: "操作选项",
       prop: "",
       width: 260,
+      fixed: false,
       cellRenderer: ({ index, row }) => (
         <>
           <el-button
             type="success"
             size="small"
+            link
             onClick={() => handleAdd(index + 1, row)}
           >
             新增子菜单
@@ -171,6 +177,7 @@ export function useColumns() {
           <el-button
             type="primary"
             size="small"
+            link
             onClick={() => handleEdit(index + 1, row)}
           >
             编辑
@@ -184,7 +191,7 @@ export function useColumns() {
             onConfirm={() => handleDelete(index + 1, row)}
             v-slots={{
               reference: () => (
-                <el-button type="danger" size="small">
+                <el-button type="danger" size="small" link>
                   {" "}
                   删除
                 </el-button>

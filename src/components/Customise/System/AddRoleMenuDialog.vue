@@ -131,7 +131,7 @@ const handleConfirm = () => {
 
   updateRoleMenu({
     roleId: state.curRoleMes.id,
-    menuId: (state.formData.menuIds as Array<Menu>).map(item => item.id)
+    menuIds: (state.formData.menuIds as Array<Menu>).map(item => item.id)
   })
     .then(res => {
       if (res.success) {

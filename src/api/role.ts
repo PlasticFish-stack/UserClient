@@ -22,7 +22,7 @@ export type RoleResult = {
 
 /** 获取角色列表 */
 export const getRole = (data?: object) => {
-  return http.request<RoleResult>("get", "/role/getall", { data });
+  return http.request<RoleResult>("get", "/role/get-all", { data });
 };
 export const addRole = (data?: object) => {
   return http.request<RoleResult>("post", "/role/add", { data });
@@ -35,9 +35,21 @@ export const deleteRole = (data?: object) => {
 };
 
 export const updateRoleMenu = (data?: object) => {
-  return http.request<RoleResult>("post", "/role/bind", { data });
+  return http.request<RoleResult>("post", "/role/bind-menu", { data });
+};
+
+export const updateRoleApiField = (data?: object) => {
+  return http.request<RoleResult>("post", "/role/bind-api-field", { data });
 };
 
 export const getBindMenu = (data?: object) => {
-  return http.request<RoleResult>("get", "/role/getbind", { params: data });
+  return http.request<RoleResult>("get", "/role/get-bind-menu", {
+    params: data
+  });
+};
+
+export const getBindApiField = (data?: object) => {
+  return http.request<RoleResult>("get", "/role/get-bind-api-field", {
+    params: data
+  });
 };

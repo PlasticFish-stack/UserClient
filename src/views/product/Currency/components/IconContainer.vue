@@ -9,7 +9,7 @@ import {
   StarChangeFunction,
   starChangeKey
 } from "../CoreModules/types";
-import pinyin from "pinyin";
+// import pinyin from "pinyin";
 
 type Props = {
   data: CurrencyTypes[];
@@ -32,12 +32,12 @@ watch(
   }
 );
 
-const getKeyPinyin = key => {
-  const pinyinArray = pinyin(key, {
-    style: pinyin.STYLE_NORMAL // 普通风格，不带声调
-  });
-  return pinyinArray[0][0]; // 获取第一个拼音字符
-};
+// const getKeyPinyin = key => {
+//   const pinyinArray = pinyin(key, {
+//     style: pinyin.STYLE_NORMAL // 普通风格，不带声调
+//   });
+//   return pinyinArray[0][0]; // 获取第一个拼音字符
+// };
 
 function reformatRegionItem(data: CurrencyTypes[]) {
   const res = {};
@@ -60,18 +60,14 @@ function reformatRegionItem(data: CurrencyTypes[]) {
     res[org].sort((a, b) => a.id - b.id); // 假设 id 是数字类型
   });
   const sortedKeys = Object.keys(res).sort((a, b) => {
-    const pinyinA = getKeyPinyin(a);
-    const pinyinB = getKeyPinyin(b);
-
-    if (pinyinA < pinyinB) {
+    if (a < b) {
       return -1;
     }
-    if (pinyinA > pinyinB) {
+    if (a > b) {
       return 1;
     }
     return 0;
   });
-
   const sortedObj = {};
   sortedKeys.forEach(key => {
     sortedObj[key] = res[key];
@@ -117,9 +113,7 @@ onBeforeMount(() => {
           <div class="content">
             <div style="width: 120px">
               <div class="name">{{ item.currencyName }}</div>
-              <el-tooltip :content="item.descriptionCn" placement="top">
-                <div class="des">{{ item.descriptionCn || "-" }}</div>
-              </el-tooltip>
+              <div class="des">{{ item.descriptionCn || "-" }}</div>
             </div>
             <div
               style="
@@ -129,10 +123,9 @@ onBeforeMount(() => {
                 align-items: flex-end;
               "
             >
-              <el-tooltip :content="item.country" placement="top">
-                <div class="country">{{ item.country }}</div>
-              </el-tooltip>
-
+              <div class="country" :title="item.country">
+                {{ item.country }}
+              </div>
               <div class="cost">{{ item.cost }}</div>
             </div>
           </div>

@@ -113,7 +113,7 @@ provide(starChangeKey, starChange);
     <el-card v-if="starCurrencyData.length > 0" class="mb-4">
       <template #header>
         <div class="card-header">
-          <h3>收藏</h3>
+          <h3>收藏123</h3>
         </div>
       </template>
       <IconContainer :data="starCurrencyData" :stars="state.stars" />
