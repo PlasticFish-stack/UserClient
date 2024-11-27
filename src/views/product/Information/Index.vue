@@ -4,6 +4,7 @@ import useInformationStore from "./modules/store";
 import { useColumns } from "./modules/config";
 import DetailDrawer from "./components/DetailDrawer.vue";
 import InformationDrawer from "./components/InformationDrawer.vue";
+import type { TableInstance } from "element-plus";
 import { PlusForm, type PlusColumn } from "plus-pro-components";
 
 const informationStore = useInformationStore();
@@ -19,7 +20,7 @@ const {
   onSizeChange,
   onCurrentChange
 } = useColumns(informationRef, detailDrawerRef);
-
+const tableLayout = ref<TableInstance["tableLayout"]>("fixed");
 const informationData = computed(
   () => informationStore.$state.state.informationData
 );
@@ -188,6 +189,7 @@ onMounted(() => {
       ref="tableRef"
       style="border-radius: 8px"
       adaptive
+      :table-layout="tableLayout"
       :adaptiveConfig="adaptiveConfig"
       row-key="id"
       alignWhole="center"

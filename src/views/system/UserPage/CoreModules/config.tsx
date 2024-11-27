@@ -130,7 +130,9 @@ export function useColumns() {
         <>
           <el-button
             type="primary"
+            icon={"Search"}
             size="small"
+            link
             onClick={() => {
               handleEdit(index + 1, row);
             }}
@@ -140,6 +142,7 @@ export function useColumns() {
           <el-button
             type="success"
             size="small"
+            link
             onClick={() => handleBingMenu(row)}
           >
             绑定
@@ -153,7 +156,7 @@ export function useColumns() {
             onConfirm={() => handleDelete(index + 1, row)}
             v-slots={{
               reference: () => (
-                <el-button type="danger" size="small">
+                <el-button type="danger" size="small" link>
                   {" "}
                   删除
                 </el-button>
